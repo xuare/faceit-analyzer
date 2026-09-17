@@ -1,0 +1,18 @@
+{
+  "name": "faceit-analyzer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "FACEIT Analyzer — поиск игроков, сравнение, статистика по картам, история и разбор матчей через официальный FACEIT Data API v4.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5"
+  }
+}
