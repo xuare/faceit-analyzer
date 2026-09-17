@@ -1,1035 +1,589 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FACEIT Analyzer — CS2 Dashboard</title>
+<title>FACEIT Analyzer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --bg:       #0d0d11;
-  --sidebar:  #0a0a0e;
-  --card:     #13131a;
-  --card2:    #17171f;
-  --border:   #1e1e28;
-  --border2:  #252531;
-  --text:     #e8e8f0;
-  --muted:    #6b6b80;
-  --muted2:   #9898aa;
-  --orange:   #ff5500;
-  --orange2:  #ff7733;
-  --orange-soft: rgba(255,85,0,.12);
-  --orange-glow: rgba(255,85,0,.25);
-  --cyan:     #00d4ff;
-  --cyan-soft:rgba(0,212,255,.10);
-  --green:    #1aff7a;
-  --green-soft:rgba(26,255,122,.10);
-  --red:      #ff3d5c;
-  --red-soft: rgba(255,61,92,.10);
-  --purple:   #8b5cf6;
-  --yellow:   #f5c542;
-  --shadow:   0 8px 32px rgba(0,0,0,.5);
-  --shadow-sm:0 2px 12px rgba(0,0,0,.4);
-  --radius:   8px;
-  --radius-sm:5px;
+  --bg:      #09090b;
+  --surface: #111113;
+  --border:  #1c1c1f;
+  --border2: #27272a;
+  --text:    #fafafa;
+  --sub:     #71717a;
+  --sub2:    #a1a1aa;
+  --accent:  #ff6b00;
+  --green:   #22c55e;
+  --red:     #ef4444;
+  --blue:    #3b82f6;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; background: var(--bg); color: var(--text); }
-body { font-family: Inter, sans-serif; font-size: 13px; line-height: 1.4; }
-button, input { font: inherit; color: inherit; }
-img { display: block; }
+body { font-family: 'Geist', system-ui, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+input, button { font: inherit; }
 
-/* ─── LAYOUT ─────────────────────────────────────────────── */
-.app { display: flex; min-height: 100vh; }
+/* ── LAYOUT ─────────────────────────── */
+.layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
 
-/* ─── SIDEBAR ─────────────────────────────────────────────── */
+/* ── SIDEBAR ────────────────────────── */
 .sidebar {
-  width: 210px; flex: none;
-  background: var(--sidebar);
   border-right: 1px solid var(--border);
-  display: flex; flex-direction: column;
-  padding: 16px 10px 16px;
+  padding: 20px 12px;
+  display: flex; flex-direction: column; gap: 6px;
   position: sticky; top: 0; height: 100vh; overflow: auto;
 }
 
-.brand {
-  display: flex; align-items: center; gap: 9px;
-  padding: 4px 8px 16px;
+.logo {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 8px 16px; margin-bottom: 4px;
 }
-.brand-logo {
-  width: 32px; height: 32px; border-radius: 7px;
-  background: linear-gradient(135deg, var(--orange), #cc3300);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 800; color: #fff;
-  box-shadow: 0 0 14px var(--orange-glow);
-  flex: none;
+.logo-mark {
+  width: 24px; height: 24px; border-radius: 6px;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; font-size: 10px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
 }
-.brand-text { font-size: 13px; font-weight: 800; letter-spacing: .3px; }
-.brand-beta {
-  font-size: 7px; font-weight: 700; color: var(--orange);
-  border: 1px solid rgba(255,85,0,.35); border-radius: 3px;
-  padding: 1px 4px; margin-left: 1px; letter-spacing: .5px;
-}
+.logo-text { font-size: 13px; font-weight: 600; letter-spacing: -.2px; }
 
-.game-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 10px; margin-bottom: 10px;
+.nav-label {
+  font-size: 11px; font-weight: 500; color: var(--sub);
+  padding: 12px 8px 4px; letter-spacing: .4px; text-transform: uppercase;
 }
-.game-card-top { display: flex; align-items: center; justify-content: space-between; }
-.game-label { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; }
-.game-value { font-size: 12px; font-weight: 700; margin-top: 3px; }
-.game-icon {
-  width: 28px; height: 28px; border-radius: 5px;
-  background: #1d1825; display: flex; align-items: center;
-  justify-content: center; font-size: 10px; font-weight: 800; color: var(--orange);
-}
-.game-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 9px; }
-.game-actions button {
-  height: 32px; background: #0f0f16; border: 1px solid var(--border);
-  border-radius: 5px; font-size: 9px; font-weight: 600; cursor: pointer;
-  transition: border-color .15s, background .15s;
-}
-.game-actions button:hover { border-color: var(--orange); background: rgba(255,85,0,.06); color: var(--orange); }
-
-.status-bar {
-  display: flex; align-items: center; gap: 6px;
-  color: var(--muted); font-size: 9px; padding: 2px 8px 12px;
-}
-.status-dot {
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--cyan); box-shadow: 0 0 6px var(--cyan); flex: none;
-}
-.status-bar span:last-child { margin-left: auto; cursor: pointer; color: var(--muted); }
-
-.nav { display: flex; flex-direction: column; gap: 1px; }
 .nav-item {
   display: flex; align-items: center; gap: 8px;
-  height: 33px; padding: 0 10px; border-radius: var(--radius-sm);
-  color: var(--muted); font-size: 10px; font-weight: 500;
-  cursor: pointer; transition: all .15s; text-decoration: none;
+  padding: 6px 8px; border-radius: 6px;
+  font-size: 13px; color: var(--sub2); cursor: pointer;
+  transition: background .1s, color .1s;
+  text-decoration: none;
 }
-.nav-item:hover { background: rgba(255,255,255,.04); color: var(--muted2); }
-.nav-item.active { background: rgba(255,85,0,.1); color: var(--orange); }
-.nav-icon { width: 14px; text-align: center; font-size: 11px; flex: none; }
+.nav-item:hover { background: var(--surface); color: var(--text); }
+.nav-item.active { background: var(--surface); color: var(--text); }
+.nav-item svg { opacity: .6; flex-shrink: 0; }
+.nav-item.active svg { opacity: 1; }
 
-.side-section-title {
-  font-size: 8px; font-weight: 700; color: var(--muted); text-transform: uppercase;
-  letter-spacing: 1px; padding: 16px 8px 6px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.side-add { font-size: 14px; font-weight: 400; color: var(--muted); cursor: pointer; line-height: 1; }
-.side-add:hover { color: var(--orange); }
+.sidebar-footer { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border); }
 
-.friend-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; cursor: pointer; border-radius: 5px; }
-.friend-row:hover { background: rgba(255,255,255,.03); }
-.friend-avatar {
-  width: 24px; height: 24px; border-radius: 50%; flex: none;
-  background: linear-gradient(135deg, #2a1f38, #1a1225);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; color: var(--orange); overflow: hidden;
-  border: 1px solid rgba(255,85,0,.2);
-}
-.friend-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.friend-info { flex: 1; min-width: 0; }
-.friend-name { font-size: 9px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.friend-meta { font-size: 8px; color: var(--muted); margin-top: 2px; }
-.friend-online { width: 5px; height: 5px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); flex: none; }
+/* ── MAIN ───────────────────────────── */
+.main { padding: 32px 40px 64px; min-width: 0; }
+.main-inner { max-width: 860px; }
 
-.sidebar-footer { margin-top: auto; border-top: 1px solid var(--border); padding-top: 8px; }
-.side-tool {
-  display: flex; align-items: center; gap: 8px;
-  height: 30px; padding: 0 9px; border-radius: 5px;
-  color: var(--muted); font-size: 10px; cursor: pointer;
-}
-.side-tool:hover { background: rgba(255,255,255,.04); color: var(--muted2); }
+/* ── SEARCH BAR ─────────────────────── */
+.search-section { margin-bottom: 32px; }
+.search-heading { font-size: 20px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 4px; }
+.search-sub { font-size: 13px; color: var(--sub); margin-bottom: 20px; }
 
-/* ─── MAIN ────────────────────────────────────────────────── */
-.main { flex: 1; min-width: 0; padding: 22px 28px 48px; }
-.main-inner { max-width: 1040px; margin: 0 auto; }
-
-/* ─── TOPBAR ──────────────────────────────────────────────── */
-.topbar { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
-.topbar-left { }
-.page-title { font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
-.page-sub { font-size: 9px; color: var(--muted); margin-top: 3px; }
-.topbar-spacer { flex: 1; }
-.search-wrap { display: flex; align-items: center; gap: 6px; }
-.search-input-wrap { position: relative; }
-.search-input {
-  width: 260px; height: 38px; padding: 0 36px 0 12px;
-  background: var(--card); border: 1px solid var(--border2);
-  border-radius: var(--radius); outline: none; color: var(--text); font-size: 11px;
+.search-row { display: flex; gap: 8px; }
+.search-field {
+  flex: 1; height: 40px; padding: 0 14px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 8px; color: var(--text); font-size: 14px; outline: none;
   transition: border-color .15s;
 }
-.search-input::placeholder { color: var(--muted); }
-.search-input:focus { border-color: var(--orange); box-shadow: 0 0 0 2px var(--orange-soft); }
-.search-icon { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 13px; pointer-events: none; }
+.search-field::placeholder { color: var(--sub); }
+.search-field:focus { border-color: var(--border2); box-shadow: 0 0 0 3px rgba(255,107,0,.08); }
+.search-btn {
+  height: 40px; padding: 0 18px; background: var(--text); color: var(--bg);
+  border: none; border-radius: 8px; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: opacity .15s;
+}
+.search-btn:hover { opacity: .88; }
+.search-btn:disabled { opacity: .4; cursor: default; }
 .compare-btn {
-  height: 38px; padding: 0 14px;
-  background: var(--card); border: 1px solid var(--border2);
-  border-radius: var(--radius); color: var(--muted2); font-size: 10px; font-weight: 600; cursor: pointer;
-  transition: all .15s;
+  height: 40px; padding: 0 14px; background: transparent;
+  border: 1px solid var(--border2); border-radius: 8px;
+  color: var(--sub2); font-size: 13px; cursor: pointer; transition: all .15s;
 }
-.compare-btn:hover { border-color: var(--orange); color: var(--orange); }
-.go-btn {
-  height: 38px; padding: 0 20px;
-  background: var(--orange); border: 1px solid var(--orange);
-  border-radius: var(--radius); color: #fff; font-size: 10px; font-weight: 800;
-  cursor: pointer; letter-spacing: .5px; transition: background .15s;
-}
-.go-btn:hover { background: var(--orange2); }
-.go-btn:disabled { opacity: .45; cursor: default; }
+.compare-btn:hover { border-color: var(--border2); color: var(--text); background: var(--surface); }
 
-/* ─── PANELS ──────────────────────────────────────────────── */
-.panels { display: grid; grid-template-columns: 1fr; gap: 28px; }
+/* ── PANELS ─────────────────────────── */
+.panels { display: grid; grid-template-columns: 1fr; gap: 32px; }
 .panels.dual { grid-template-columns: 1fr 1fr; }
-.panel { min-width: 0; }
 
-/* ─── PLAYER HEAD ─────────────────────────────────────────── */
-.player-head {
+/* ── EMPTY STATE ────────────────────── */
+.empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 80px 20px; text-align: center; color: var(--sub);
+}
+.empty-icon { font-size: 32px; margin-bottom: 12px; opacity: .4; }
+.empty-title { font-size: 15px; font-weight: 500; color: var(--sub2); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; max-width: 280px; line-height: 1.6; }
+
+/* ── PLAYER CARD ────────────────────── */
+.player-card {
   display: flex; align-items: center; gap: 14px;
-  background: linear-gradient(110deg, var(--card), #0f0f16);
-  border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 14px 16px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
+  padding-bottom: 20px; margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
 }
-.player-avatar-wrap { position: relative; flex: none; }
-.player-avatar {
-  width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
-  border: 2px solid rgba(255,85,0,.35); background: var(--card2);
+.avatar {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+  background: var(--surface); border: 1px solid var(--border2); flex-shrink: 0;
 }
-.player-avatar-fallback {
-  width: 50px; height: 50px; border-radius: 50%; flex: none;
-  background: linear-gradient(135deg, var(--orange), #551100);
+.avatar-fallback {
+  width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface); border: 1px solid var(--border2);
   display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 800; color: #fff;
-  border: 2px solid rgba(255,85,0,.35);
+  font-size: 14px; font-weight: 600; color: var(--sub2);
 }
-.player-level-badge {
-  position: absolute; bottom: -3px; right: -3px;
-  background: var(--orange); border-radius: 50%; width: 18px; height: 18px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 8px; font-weight: 800; color: #fff; border: 2px solid var(--bg);
+.player-name { font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
+.player-tags { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: 11px; font-weight: 500; padding: 2px 8px;
+  border: 1px solid var(--border2); border-radius: 99px; color: var(--sub2);
 }
-.player-info { flex: 1; min-width: 0; }
-.player-name { font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.player-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
-.elo-badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  background: var(--orange-soft); border: 1px solid rgba(255,85,0,.2);
-  border-radius: 4px; padding: 3px 8px;
-  font-size: 10px; font-weight: 700; color: var(--orange);
-}
-.meta-tag {
-  font-size: 9px; color: var(--muted); background: var(--card2);
-  border: 1px solid var(--border); border-radius: 4px; padding: 2px 7px;
-}
-.player-head-right { margin-left: auto; }
+.tag.accent { border-color: rgba(255,107,0,.3); color: var(--accent); }
+.player-link { margin-left: auto; font-size: 12px; color: var(--sub); text-decoration: none; }
+.player-link:hover { color: var(--text); }
 
-/* ─── STATS FILTER TABS ───────────────────────────────────── */
-.stats-filter-bar {
-  display: flex; align-items: center; gap: 4px; margin-bottom: 14px; flex-wrap: wrap;
+/* ── FILTER TABS ────────────────────── */
+.filter-tabs { display: flex; gap: 2px; margin-bottom: 20px; }
+.ftab {
+  padding: 5px 12px; border-radius: 6px; border: none; background: transparent;
+  font-size: 12px; font-weight: 500; color: var(--sub); cursor: pointer;
+  transition: all .1s;
 }
-.filter-label { font-size: 9px; color: var(--muted); margin-right: 4px; }
-.filter-tab {
-  height: 26px; padding: 0 10px; border-radius: 5px;
-  border: 1px solid var(--border2); background: transparent;
-  color: var(--muted); font-size: 9px; font-weight: 600; cursor: pointer;
-  transition: all .15s;
-}
-.filter-tab:hover { border-color: var(--border2); color: var(--muted2); background: rgba(255,255,255,.04); }
-.filter-tab.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+.ftab:hover { color: var(--sub2); background: var(--surface); }
+.ftab.active { background: var(--surface); color: var(--text); border: 1px solid var(--border2); }
 
-/* ─── STAT TILES ──────────────────────────────────────────── */
-.stat-tiles { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 8px; }
-.stat-tiles.row2 { margin-bottom: 20px; }
+/* ── STATS GRID ─────────────────────── */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 32px; }
+.stat-cell { background: var(--bg); padding: 18px 20px; }
+.stat-val { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: -.5px; line-height: 1; }
+.stat-lbl { font-size: 11px; color: var(--sub); margin-top: 5px; font-weight: 400; }
 
-.stat-tile {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 14px 14px 12px;
-  position: relative; overflow: hidden; min-height: 80px;
-}
-.stat-tile::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
-}
-.stat-tile.c-orange::after { background: linear-gradient(90deg, var(--orange), transparent); }
-.stat-tile.c-cyan::after   { background: linear-gradient(90deg, var(--cyan), transparent); }
-.stat-tile.c-green::after  { background: linear-gradient(90deg, var(--green), transparent); }
-.stat-tile.c-purple::after { background: linear-gradient(90deg, var(--purple), transparent); }
-.stat-tile.c-red::after    { background: linear-gradient(90deg, var(--red), transparent); }
-.stat-tile.c-yellow::after { background: linear-gradient(90deg, var(--yellow), transparent); }
+/* ── SECTION ────────────────────────── */
+.section { margin-bottom: 32px; }
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-size: 13px; font-weight: 600; color: var(--sub2); text-transform: uppercase; letter-spacing: .5px; }
+.section-action { font-size: 12px; color: var(--sub); cursor: pointer; background: none; border: none; }
+.section-action:hover { color: var(--text); }
 
-.tile-value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 22px; font-weight: 700; line-height: 1;
-  letter-spacing: -.5px;
-}
-.tile-label { font-size: 9px; color: var(--muted); margin-top: 7px; }
-
-.tile-bar-wrap { position: absolute; bottom: 10px; left: 14px; right: 14px; }
-.tile-bar-track { height: 2px; border-radius: 2px; background: var(--border2); overflow: hidden; }
-.tile-bar-fill { height: 100%; border-radius: 2px; transition: width .6s ease; }
-.tile-bar-fill.c-orange { background: var(--orange); }
-.tile-bar-fill.c-cyan   { background: var(--cyan); }
-.tile-bar-fill.c-green  { background: var(--green); }
-.tile-bar-fill.c-purple { background: var(--purple); }
-.tile-bar-fill.c-red    { background: var(--red); }
-.tile-bar-fill.c-yellow { background: var(--yellow); }
-
-.tile-indicator {
-  position: absolute; bottom: 14px; right: 14px;
-  font-size: 8px; font-weight: 700;
-}
-.tile-indicator.up { color: var(--green); }
-.tile-indicator.down { color: var(--red); }
-
-/* ─── SECTION HEADER ──────────────────────────────────────── */
-.section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 10px; margin-top: 6px;
-}
-.section-title { font-size: 14px; font-weight: 700; }
-.view-more {
-  font-size: 9px; color: var(--orange); cursor: pointer; background: none;
-  border: none; font-weight: 600; letter-spacing: .3px;
-}
-.view-more:hover { color: var(--orange2); }
-
-/* ─── MATCHES TABLE ───────────────────────────────────────── */
-.matches-table-wrap {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden; margin-bottom: 22px;
-}
-.matches-table { width: 100%; border-collapse: collapse; }
-.matches-table thead tr {
-  border-bottom: 1px solid var(--border2);
-}
-.matches-table thead th {
-  padding: 9px 12px; text-align: left; font-size: 8px;
-  font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .7px;
+/* ── TABLE ──────────────────────────── */
+.tbl-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 500;
+  color: var(--sub); background: var(--surface); border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
-.matches-table thead th:first-child { width: 60px; }
-.matches-table tbody tr {
-  border-bottom: 1px solid rgba(255,255,255,.03);
-  cursor: pointer; transition: background .12s;
-}
-.matches-table tbody tr:last-child { border-bottom: 0; }
-.matches-table tbody tr:hover { background: rgba(255,255,255,.025); }
-.matches-table tbody td { padding: 8px 12px; font-size: 10px; vertical-align: middle; }
+tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .08s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: var(--surface); }
+tbody td { padding: 10px 16px; font-size: 13px; vertical-align: middle; }
 
-.match-map-cell { display: flex; align-items: center; gap: 8px; }
-.map-thumb {
-  width: 38px; height: 26px; border-radius: 4px;
-  background: var(--card2); flex: none; overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 7px; font-weight: 700; color: var(--muted); border: 1px solid var(--border);
-}
-.map-name { font-size: 10px; font-weight: 600; color: var(--text); }
+.map-cell { display: flex; align-items: center; gap: 10px; }
+.map-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
+.map-name { font-weight: 500; }
 
-.result-badge {
-  display: inline-flex; align-items: center; justify-content: center;
-  height: 20px; min-width: 42px; padding: 0 7px; border-radius: 4px;
-  font-size: 9px; font-weight: 700; letter-spacing: .3px;
-}
-.result-badge.win   { background: var(--green-soft); color: var(--green); }
-.result-badge.loss  { background: var(--red-soft);   color: var(--red); }
-.result-badge.live  { background: rgba(255,85,0,.15); color: var(--orange); }
-.result-badge.cancelled { background: rgba(255,255,255,.06); color: var(--muted); }
+.res { display: inline-block; font-size: 12px; font-weight: 600; font-family: 'Geist Mono', monospace; }
+.res.w { color: var(--green); }
+.res.l { color: var(--red); }
+.res.d { color: var(--sub); }
 
-.elo-change { font-weight: 700; font-size: 10px; }
-.elo-change.pos { color: var(--green); }
-.elo-change.neg { color: var(--red); }
-.elo-change.neu { color: var(--muted); }
+.elo-pos { color: var(--green); font-size: 12px; font-family: 'Geist Mono', monospace; }
+.elo-neg { color: var(--red);   font-size: 12px; font-family: 'Geist Mono', monospace; }
+.elo-neu { color: var(--sub);   font-size: 12px; font-family: 'Geist Mono', monospace; }
 
-.match-id-cell { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--muted); }
+.match-id { font-family: 'Geist Mono', monospace; font-size: 11px; color: var(--sub); }
+td.muted { color: var(--sub); font-size: 12px; }
 
-/* ─── MATCH DETAIL ────────────────────────────────────────── */
-.match-detail-row td { padding: 0 !important; }
-.match-detail-inner {
-  padding: 12px; border-top: 1px solid var(--border);
-  background: #0e0e14; display: none;
+/* ── MATCH DETAIL ───────────────────── */
+.detail-row td { padding: 0 !important; }
+.detail-inner {
+  display: none; padding: 16px; background: var(--surface);
+  border-top: 1px solid var(--border);
 }
-.match-detail-inner.show { display: block; }
-.detail-round-info { font-size: 9px; color: var(--muted); margin-bottom: 10px; }
-.detail-teams { display: flex; gap: 14px; }
-.detail-team { flex: 1; min-width: 0; }
-.detail-team-name { font-size: 8px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .7px; margin-bottom: 6px; }
-.detail-player { display: flex; justify-content: space-between; gap: 8px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: 9px; }
-.detail-player:last-child { border-bottom: 0; }
-.detail-player.me { color: var(--orange); font-weight: 700; }
-.detail-player .kda { font-family: 'JetBrains Mono', monospace; color: var(--muted2); }
+.detail-inner.show { display: block; }
+.detail-meta { font-size: 12px; color: var(--sub); margin-bottom: 12px; }
+.detail-teams { display: flex; gap: 24px; }
+.detail-team { flex: 1; }
+.team-name { font-size: 11px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+.d-player { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.d-player:last-child { border-bottom: none; }
+.d-player.me { color: var(--accent); font-weight: 600; }
+.d-player .kda { font-family: 'Geist Mono', monospace; color: var(--sub); }
+.d-player.me .kda { color: var(--accent); }
 
-/* ─── MAPS SECTION ────────────────────────────────────────── */
-.maps-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 22px; }
-.map-bar-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 12px 14px;
-}
-.map-bar-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-.map-bar-name { font-size: 11px; font-weight: 700; }
-.map-bar-meta { font-size: 8px; color: var(--muted); text-align: right; line-height: 1.6; }
-.map-bar-track { height: 3px; background: var(--border2); border-radius: 3px; overflow: hidden; }
-.map-bar-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+/* ── MAP BARS ───────────────────────── */
+.map-bars { display: flex; flex-direction: column; gap: 2px; }
+.map-bar-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.map-bar-row:last-child { border-bottom: none; }
+.map-bar-name { width: 100px; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+.map-bar-track { flex: 1; height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+.map-bar-fill { height: 100%; border-radius: 2px; background: var(--sub2); transition: width .5s ease; }
+.map-bar-fill.good { background: var(--green); }
+.map-bar-fill.bad  { background: var(--red); }
+.map-bar-meta { font-size: 11px; color: var(--sub); font-family: 'Geist Mono', monospace; text-align: right; width: 120px; flex-shrink: 0; }
 
-/* ─── MORE TOGGLE ─────────────────────────────────────────── */
-.more-toggle {
-  background: none; border: 0; color: var(--muted); font-size: 9px;
-  cursor: pointer; padding: 6px 0; display: block;
+/* ── HIST FILTERS ───────────────────── */
+.hist-filters { display: flex; gap: 4px; }
+.hf {
+  padding: 3px 10px; border-radius: 5px; border: 1px solid transparent;
+  font-size: 12px; font-weight: 500; color: var(--sub); background: none; cursor: pointer;
 }
-.more-toggle:hover { color: var(--orange); }
-.raw-stats { display: none; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
-.raw-stats.show { display: block; }
-.raw-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: 9px; }
-.raw-row:last-child { border-bottom: 0; }
-.raw-row .k { color: var(--muted); }
+.hf:hover { color: var(--sub2); }
+.hf.active { border-color: var(--border2); color: var(--text); background: var(--surface); }
 
-/* ─── STATES ──────────────────────────────────────────────── */
-.state-box {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 18px; font-size: 10px; color: var(--muted);
-}
-.state-box.error { color: var(--red); border-color: rgba(255,61,92,.25); }
-.state-box.loading { color: var(--muted); }
-.suggest-chip {
-  display: inline-block; margin: 6px 5px 0 0; padding: 5px 10px;
-  background: var(--card2); border: 1px solid rgba(255,85,0,.25); border-radius: 5px;
-  color: var(--orange); font-size: 9px; cursor: pointer;
-}
-.suggest-chip:hover { background: var(--orange-soft); }
+/* ── RAW TOGGLE ─────────────────────── */
+.raw-toggle { font-size: 12px; color: var(--sub); background: none; border: none; cursor: pointer; padding: 8px 0; display: block; }
+.raw-toggle:hover { color: var(--sub2); }
+.raw-box { display: none; }
+.raw-box.show { display: block; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 8px; }
+.raw-row { display: flex; justify-content: space-between; padding: 7px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+.raw-row:last-child { border-bottom: none; }
+.raw-row:nth-child(odd) { background: var(--surface); }
+.raw-key { color: var(--sub); }
 
-/* ─── WELCOME ─────────────────────────────────────────────── */
-.welcome-box {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 36px; text-align: center;
-}
-.welcome-icon { font-size: 48px; margin-bottom: 12px; }
-.welcome-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-.welcome-sub { font-size: 11px; color: var(--muted); max-width: 360px; margin: 0 auto; line-height: 1.6; }
+/* ── STATE MSGS ─────────────────────── */
+.state { padding: 14px 16px; font-size: 13px; color: var(--sub); border: 1px solid var(--border); border-radius: 8px; }
+.state.err { color: var(--red); border-color: rgba(239,68,68,.2); }
+.chip { display: inline-block; margin: 6px 4px 0 0; padding: 4px 10px; border: 1px solid var(--border2); border-radius: 6px; font-size: 12px; color: var(--sub2); cursor: pointer; }
+.chip:hover { color: var(--text); border-color: var(--border2); background: var(--surface); }
 
-/* ─── LOADER SPINNER ──────────────────────────────────────── */
-.spinner {
-  display: inline-block; width: 14px; height: 14px;
-  border: 2px solid var(--border2); border-top-color: var(--orange);
-  border-radius: 50%; animation: spin .7s linear infinite;
-}
+.spin { display: inline-block; width: 12px; height: 12px; border: 1.5px solid var(--border2); border-top-color: var(--sub2); border-radius: 50%; animation: spin .6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ─── COMPARE SLOTS ───────────────────────────────────────── */
-.compare-search-row { display: flex; align-items: center; gap: 6px; }
-.remove-slot-btn {
-  background: none; border: 1px solid var(--border2); border-radius: 5px;
-  color: var(--muted); font-size: 12px; width: 32px; height: 32px;
-  cursor: pointer; flex: none; transition: all .15s;
-}
-.remove-slot-btn:hover { border-color: var(--red); color: var(--red); }
+footer { margin-top: 48px; font-size: 12px; color: var(--sub); }
 
-footer {
-  margin-top: 32px; text-align: center; font-size: 9px; color: var(--muted);
-  border-top: 1px solid var(--border); padding-top: 16px;
-}
-
-/* ─── RESPONSIVE ──────────────────────────────────────────── */
-@media (max-width: 1000px) {
-  .stat-tiles { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 820px) {
-  .sidebar { width: 180px; }
-  .main { padding: 16px; }
-  .topbar { flex-wrap: wrap; }
-  .topbar-spacer { display: none; }
-  .search-wrap { width: 100%; order: 3; }
-  .search-input { width: 100%; flex: 1; }
-}
-@media (max-width: 640px) {
-  .app { display: block; }
-  .sidebar { position: relative; width: 100%; height: auto; min-height: 0; border-right: 0; border-bottom: 1px solid var(--border); padding: 10px; }
-  .game-card, .status-bar, .side-section-title, .friend-row, .sidebar-footer, .nav { display: none; }
-  .main { padding: 12px; }
+/* ── RESPONSIVE ─────────────────────── */
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px; }
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
   .panels.dual { grid-template-columns: 1fr; }
-  .stat-tiles { grid-template-columns: 1fr 1fr; }
-  .maps-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .search-row { flex-wrap: wrap; }
+  .search-field { min-width: 0; }
 }
 </style>
 </head>
 <body>
-<div class="app">
+<div class="layout">
 
-  <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
-  <aside class="sidebar">
-    <div class="brand">
-      <div class="brand-logo">FC</div>
-      <div class="brand-text">FACEIT<span class="brand-beta">BETA</span></div>
-    </div>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">F</div>
+    <span class="logo-text">FACEIT Analyzer</span>
+  </div>
 
-    <div class="game-card">
-      <div class="game-card-top">
-        <div>
-          <div class="game-label">Game version</div>
-          <div class="game-value">CS2</div>
-        </div>
-        <div class="game-icon">⬡</div>
-      </div>
-      <div class="game-actions">
-        <button type="button">▷&nbsp; Play</button>
-        <button type="button">↗&nbsp; Join</button>
-      </div>
-    </div>
+  <div class="nav-label">Menu</div>
+  <div class="nav-item active">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Leaderboard
+  </div>
+  <div class="nav-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+    Tournaments
+  </div>
+  <div class="nav-item">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    Browse
+  </div>
 
-    <div class="status-bar">
-      <span class="status-dot"></span>
-      <span>Online</span>
-      <span>⚙</span>
+  <div class="sidebar-footer">
+    <div class="nav-item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      Settings
     </div>
+  </div>
+</aside>
 
-    <nav class="nav">
-      <div class="nav-item active"><span class="nav-icon">⊞</span>Dashboard</div>
-      <div class="nav-item"><span class="nav-icon">♛</span>Leaderboard</div>
-      <div class="nav-item"><span class="nav-icon">⬡</span>Tournaments</div>
-      <div class="nav-item"><span class="nav-icon">✦</span>Events</div>
-      <div class="nav-item"><span class="nav-icon">◎</span>Fun Modes</div>
-      <div class="nav-item"><span class="nav-icon">⌕</span>Browse</div>
-    </nav>
+<!-- MAIN -->
+<main class="main">
+<div class="main-inner">
 
-    <div class="side-section-title">Friends <span class="side-add">+</span></div>
-    <div class="friend-row">
-      <div class="friend-avatar">S</div>
-      <div class="friend-info">
-        <div class="friend-name">ShadowHunter</div>
-        <div class="friend-meta">ELO: 2,540</div>
-      </div>
-      <span class="friend-online"></span>
+  <div class="search-section">
+    <h1 class="search-heading">Player Stats</h1>
+    <p class="search-sub">Search any FACEIT CS2 player to view their full statistics.</p>
+    <div class="search-row" id="search-row">
+      <!-- rendered by JS -->
     </div>
-    <div class="friend-row">
-      <div class="friend-avatar">D</div>
-      <div class="friend-info">
-        <div class="friend-name">DragonSlayer</div>
-        <div class="friend-meta">ELO: 3,104</div>
-      </div>
-      <span class="friend-online"></span>
+    <div style="margin-top:8px;">
+      <button class="compare-btn" id="compare-btn" type="button">Compare two players</button>
     </div>
-    <div class="friend-row">
-      <div class="friend-avatar">M</div>
-      <div class="friend-info">
-        <div class="friend-name">MysticWarrior</div>
-        <div class="friend-meta">ELO: 1,560</div>
+  </div>
+
+  <div class="panels" id="panels">
+    <div class="panel" id="panel-0">
+      <div class="empty">
+        <div class="empty-icon">◎</div>
+        <div class="empty-title">No player selected</div>
+        <div class="empty-sub">Enter a FACEIT nickname above and hit Search</div>
       </div>
     </div>
-    <div class="friend-row">
-      <div class="friend-avatar">N</div>
-      <div class="friend-info">
-        <div class="friend-name">NightStalker</div>
-        <div class="friend-meta">ELO: 2,060</div>
-      </div>
-      <span class="friend-online"></span>
-    </div>
+  </div>
 
-    <div class="sidebar-footer">
-      <div class="side-tool">◯&nbsp;&nbsp;Messages</div>
-      <div class="side-tool">🔔&nbsp;&nbsp;Notifications</div>
-    </div>
-  </aside>
-
-  <!-- ═══ MAIN ═══════════════════════════════════════════════ -->
-  <main class="main">
-    <div class="main-inner">
-
-      <!-- Topbar -->
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="page-title">Player Dashboard</div>
-          <div class="page-sub">FACEIT Analyzer · CS2 Stats · Real Data API v4</div>
-        </div>
-        <div class="topbar-spacer"></div>
-        <div class="search-wrap" id="search-wrap">
-          <!-- rendered by JS -->
-        </div>
-        <button class="go-btn" id="go-btn" type="button">SEARCH</button>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:18px;">
-        <button class="compare-btn" id="compare-toggle" type="button">⇆ Compare players</button>
-      </div>
-
-      <!-- Panels -->
-      <div class="panels" id="panels">
-        <div class="panel" id="panel-0">
-          <div class="welcome-box">
-            <div class="welcome-icon">🎯</div>
-            <div class="welcome-title">Enter a FACEIT nickname</div>
-            <div class="welcome-sub">Type any CS2 player's FACEIT nickname above and hit Search to see their full stats, match history and map breakdown.</div>
-          </div>
-        </div>
-      </div>
-
-      <footer>FACEIT Analyzer &middot; data provided by FACEIT Data API v4</footer>
-    </div>
-  </main>
+  <footer>FACEIT Analyzer · data from FACEIT Data API v4</footer>
+</div>
+</main>
 </div>
 
 <script>
-(function () {
-  'use strict';
+(function(){
+'use strict';
 
-  /* ── helpers ─────────────────────────────────────────────── */
-  function esc(s) {
-    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-    });
-  }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+async function api(path){ const r=await fetch(path); const d=await r.json().catch(()=>null); if(!r.ok) throw new Error((d&&d.error)||'Error '+r.status); return d; }
 
-  function fmt(v, decimals) {
-    var n = parseFloat(v);
-    if (isNaN(n)) return v || '—';
-    return decimals != null ? n.toFixed(decimals) : n.toString();
-  }
+function fdate(ts){ if(!ts) return '—'; return new Date(ts*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }
 
-  async function api(path) {
-    var res = await fetch(path);
-    var data = await res.json().catch(function () { return null; });
-    if (!res.ok) throw new Error((data && data.error) || 'Error ' + res.status);
-    return data;
-  }
+var slots=[{id:0}], slotState={};
+var searchRow=document.getElementById('search-row');
+var panelsEl=document.getElementById('panels');
+var compareBtn=document.getElementById('compare-btn');
 
-  function dayLabel(ts) {
-    if (!ts) return '';
-    var d = Math.floor((Date.now() / 1000 - ts) / 86400);
-    if (d <= 0) return 'today';
-    if (d === 1) return 'yesterday';
-    if (d < 7) return d + ' days ago';
-    return new Date(ts * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-  }
+function renderInputs(){
+  searchRow.innerHTML=slots.map(s=>
+    `<input class="search-field" type="text" placeholder="Nickname…" id="inp-${s.id}">`+
+    (slots.length>1?`<button class="compare-btn" data-rm="${s.id}">✕</button>`:'')+
+    (s===slots[slots.length-1]?`<button class="search-btn" id="go-btn">Search</button>`:'')
+  ).join('');
+  searchRow.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{
+    slots=slots.filter(s=>s.id!==+b.dataset.rm); delete slotState[+b.dataset.rm];
+    renderInputs(); renderPanels(); compareBtn.textContent='Compare two players';
+  }));
+  document.getElementById('go-btn').addEventListener('click', go);
+  searchRow.addEventListener('keydown',e=>{ if(e.key==='Enter') go(); });
+}
 
-  function formatDate(ts) {
-    if (!ts) return '—';
-    return new Date(ts * 1000).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-  }
+compareBtn.addEventListener('click',()=>{
+  if(slots.length===1){ slots.push({id:1}); compareBtn.textContent='Remove comparison'; }
+  else { slots=[{id:0}]; delete slotState[1]; compareBtn.textContent='Compare two players'; }
+  renderInputs(); renderPanels();
+});
 
-  /* ── state ───────────────────────────────────────────────── */
-  var slots = [{ id: 0 }];
-  var slotState = {};
+function renderPanels(){
+  panelsEl.className='panels'+(slots.length>1?' dual':'');
+  panelsEl.innerHTML=slots.map(s=>`<div class="panel" id="panel-${s.id}"></div>`).join('');
+}
+function setPanel(id,html){ var e=document.getElementById('panel-'+id); if(e) e.innerHTML=html; }
 
-  var searchWrap    = document.getElementById('search-wrap');
-  var panelsEl      = document.getElementById('panels');
-  var compareToggle = document.getElementById('compare-toggle');
-  var goBtn         = document.getElementById('go-btn');
+function go(){
+  slots.forEach(s=>{ var inp=document.getElementById('inp-'+s.id); var n=inp&&inp.value.trim(); if(n) load(s.id,n); });
+}
 
-  /* ── search inputs ───────────────────────────────────────── */
-  function renderSearchInputs() {
-    searchWrap.innerHTML = slots.map(function (s) {
-      return '<div class="compare-search-row">' +
-        '<div class="search-input-wrap">' +
-          '<input class="search-input" type="text" placeholder="FACEIT nickname…" id="input-' + s.id + '">' +
-          '<span class="search-icon">⌕</span>' +
-        '</div>' +
-        (slots.length > 1 ? '<button class="remove-slot-btn" data-remove="' + s.id + '" type="button">✕</button>' : '') +
-        '</div>';
+/* ── STATS CONFIG ── */
+var STATS=[
+  {keys:['Win Rate %'],         label:'Win Rate',     fmt:v=>parseFloat(v).toFixed(1)+'%'},
+  {keys:['Average Headshots %','Headshots %'], label:'Headshots', fmt:v=>parseFloat(v).toFixed(1)+'%'},
+  {keys:['Average K/D Ratio','K/D Ratio'],     label:'K/D Ratio', fmt:v=>parseFloat(v).toFixed(2)},
+  {keys:['Average Kills'],      label:'Avg Kills',    fmt:v=>parseFloat(v).toFixed(1)},
+  {keys:['Matches'],            label:'Matches',      fmt:v=>v},
+  {keys:['Wins'],               label:'Wins',         fmt:v=>v},
+  {keys:['Longest Win Streak'], label:'Best Streak',  fmt:v=>v},
+  {keys:['Current Win Streak'], label:'Current Streak',fmt:v=>v},
+  {keys:['Recent Results'],     label:'Last 5',       fmt:v=>Array.isArray(v)?v.join(' '):v},
+];
+
+function pick(lt,keys){ for(var k of keys) if(lt[k]!=null) return lt[k]; return null; }
+
+function renderStats(lt){
+  var cells=STATS.map(s=>{ var v=pick(lt,s.keys); if(v==null) return ''; return `<div class="stat-cell"><div class="stat-val">${esc(s.fmt(v))}</div><div class="stat-lbl">${s.label}</div></div>`; }).filter(Boolean);
+  if(!cells.length) return '<div class="state">No lifetime stats available.</div>';
+  return `<div class="stats-grid">${cells.join('')}</div>`;
+}
+
+/* ── HISTORY ── */
+function faction(m,pid){ var t=m.teams||{}; for(var k in t) if((t[k].players||[]).some(p=>p.player_id===pid)) return k; return null; }
+
+async function loadHistory(slotId,playerId,limit){
+  var tbody=document.getElementById('tbody-'+slotId);
+  if(!tbody) return;
+  tbody.innerHTML=`<tr><td colspan="7" class="muted" style="padding:14px"><span class="spin"></span> Loading…</td></tr>`;
+  try{
+    var h=await api('/api/player-id/'+playerId+'/history?limit='+limit);
+    var items=(h.items||[]);
+    if(!items.length){ tbody.innerHTML=`<tr><td colspan="7" class="muted" style="padding:14px">No matches found.</td></tr>`; return; }
+    tbody.innerHTML=items.map(m=>{
+      var f=faction(m,playerId), w=m.results&&m.results.winner;
+      var win=f&&w?f===w:null;
+      var score=m.results&&m.results.score?(m.results.score[f]+':'+m.results.score[f==='faction1'?'faction2':'faction1']):'—';
+      var elo=m.elo_changes&&f?m.elo_changes[f]:null;
+      var map=(m.voting&&m.voting.map&&m.voting.map.pick&&m.voting.map.pick[0])||m.game_mode||'—';
+      var dotCls=win===null?'':'';
+      var resHtml=win===null?`<span class="res d">?</span>`:(win?`<span class="res w">${esc(score)}</span>`:`<span class="res l">${esc(score)}</span>`);
+      var eloHtml='<span class="elo-neu">—</span>';
+      if(elo!==null){ var n=parseInt(elo,10); eloHtml=n>0?`<span class="elo-pos">+${n}</span>`:n<0?`<span class="elo-neg">${n}</span>`:`<span class="elo-neu">±0</span>`; }
+      var mid=m.match_id||'';
+      return `<tr data-mid="${esc(mid)}" data-pid="${esc(playerId)}">
+        <td><div class="map-cell"><div class="map-dot"></div><span class="map-name">${esc(map)}</span></div></td>
+        <td>${resHtml}</td>
+        <td>${eloHtml}</td>
+        <td class="muted">${esc(fdate(m.finished_at))}</td>
+        <td class="muted">—</td>
+        <td class="muted">—</td>
+        <td><span class="match-id">${esc(mid.slice(0,12))}…</span></td>
+      </tr>
+      <tr class="detail-row"><td colspan="7"><div class="detail-inner" id="di-${esc(mid)}"></div></td></tr>`;
     }).join('');
-
-    searchWrap.querySelectorAll('[data-remove]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var id = parseInt(btn.dataset.remove, 10);
-        slots = slots.filter(function (s) { return s.id !== id; });
-        delete slotState[id];
-        renderSearchInputs();
-        renderPanelContainers();
-        compareToggle.textContent = '⇆ Compare players';
-      });
-    });
+    wireRows(tbody.closest('table'));
+  }catch(e){
+    tbody.innerHTML=`<tr><td colspan="7" class="muted" style="padding:14px;color:var(--red)">${esc(e.message)}</td></tr>`;
   }
+}
 
-  compareToggle.addEventListener('click', function () {
-    if (slots.length === 1) {
-      slots.push({ id: 1 });
-      compareToggle.textContent = '✕ Remove comparison';
-    } else {
-      slots = [{ id: 0 }];
-      delete slotState[1];
-      compareToggle.textContent = '⇆ Compare players';
-    }
-    renderSearchInputs();
-    renderPanelContainers();
+function wireRows(tbl){
+  tbl.querySelectorAll('tbody tr[data-mid]').forEach(tr=>{
+    tr.addEventListener('click',()=>{
+      var mid=tr.dataset.mid, pid=tr.dataset.pid;
+      var box=document.getElementById('di-'+mid);
+      if(!box) return;
+      if(box.classList.contains('show')){ box.classList.remove('show'); return; }
+      openDetail(mid,pid,box);
+    });
   });
+}
 
-  function renderPanelContainers() {
-    panelsEl.className = 'panels' + (slots.length > 1 ? ' dual' : '');
-    panelsEl.innerHTML = slots.map(function (s) {
-      return '<div class="panel" id="panel-' + s.id + '"></div>';
-    }).join('');
-  }
-
-  function setPanel(id, html) {
-    var el = document.getElementById('panel-' + id);
-    if (el) el.innerHTML = html;
-  }
-
-  /* ── stat tiles config ───────────────────────────────────── */
-  var TILE_DEFS = [
-    { keys: ['Win Rate %', 'Winrate %'],                label: 'Winrate',             color: 'orange', max: 100, suffix: '%', decimals: 1 },
-    { keys: ['Average Headshots %', 'Headshots %'],     label: 'Headshots',           color: 'cyan',   max: 100, suffix: '%', decimals: 1 },
-    { keys: ['Average K/D Ratio', 'K/D Ratio'],         label: 'Avg. K/D Ratio',      color: 'green',  max: 3,   suffix: '',  decimals: 2 },
-    { keys: ['Average Kills', 'Avg Kills'],              label: 'Avg. Kills/Round',    color: 'purple', max: 30,  suffix: '',  decimals: 1 },
-    { keys: ['Matches'],                                 label: 'Total Matches',       color: 'yellow', max: null,suffix: '',  decimals: 0 },
-    { keys: ['Longest Win Streak', 'Current Win Streak'],label: 'Best Win Streak',    color: 'red',    max: 20,  suffix: '',  decimals: 0 },
-  ];
-
-  var TILE2_DEFS = [
-    { keys: ['Wins'],                                    label: 'Wins',                color: 'green',  max: null,suffix: '',  decimals: 0 },
-    { keys: ['Current Win Streak'],                      label: 'Current Streak',      color: 'orange', max: 20,  suffix: '',  decimals: 0 },
-  ];
-
-  function findStat(lifetime, keys) {
-    for (var i = 0; i < keys.length; i++) {
-      if (lifetime[keys[i]] !== undefined && lifetime[keys[i]] !== null) return lifetime[keys[i]];
-    }
-    return null;
-  }
-
-  function renderTile(def, lifetime) {
-    var raw = findStat(lifetime, def.keys);
-    if (raw === null) return '';
-    var val = parseFloat(raw);
-    var display = isNaN(val) ? String(raw) : (def.decimals != null ? val.toFixed(def.decimals) : val) + def.suffix;
-    var pct = def.max ? Math.min((val / def.max) * 100, 100) : 0;
-    return '<div class="stat-tile c-' + def.color + '">' +
-      '<div class="tile-value">' + esc(display) + '</div>' +
-      '<div class="tile-label">' + esc(def.label) + '</div>' +
-      (def.max ? '<div class="tile-bar-wrap"><div class="tile-bar-track"><div class="tile-bar-fill c-' + def.color + '" style="width:' + pct + '%"></div></div></div>' : '') +
-      '</div>';
-  }
-
-  function renderTiles(lifetime) {
-    var row1 = TILE_DEFS.map(function (d) { return renderTile(d, lifetime); }).filter(Boolean).join('');
-    return '<div class="stat-tiles row1">' + row1 + '</div>';
-  }
-
-  /* ── maps ────────────────────────────────────────────────── */
-  var MAP_COLORS = ['orange','cyan','green','purple','yellow','red','orange','cyan'];
-
-  function renderMaps(segments) {
-    var maps = (segments || [])
-      .filter(function (s) { return s.type === 'Map'; })
-      .map(function (s) {
-        var st = s.stats || {};
-        return {
-          label:   s.label || 'Map',
-          matches: parseInt(st.Matches, 10) || 0,
-          winRate: parseFloat(st['Win Rate %']) || 0,
-          kd:      st['K/D Ratio'] || st['Average K/D Ratio'] || '—',
-        };
-      })
-      .filter(function (m) { return m.matches > 0; })
-      .sort(function (a, b) { return b.matches - a.matches; })
-      .slice(0, 8);
-
-    if (!maps.length) return '<div class="state-box">No map data available yet.</div>';
-
-    return '<div class="maps-grid">' + maps.map(function (m, i) {
-      var c = MAP_COLORS[i % MAP_COLORS.length];
-      var pct = Math.min(m.winRate, 100);
-      return '<div class="map-bar-card">' +
-        '<div class="map-bar-head">' +
-          '<div class="map-bar-name">' + esc(m.label) + '</div>' +
-          '<div class="map-bar-meta">' + m.matches + ' matches<br>' + Math.round(m.winRate) + '% wins &middot; K/D ' + esc(m.kd) + '</div>' +
-        '</div>' +
-        '<div class="map-bar-track"><div class="map-bar-fill" style="width:' + pct + '%;background:var(--' + c + ')"></div></div>' +
-      '</div>';
-    }).join('') + '</div>';
-  }
-
-  /* ── match history ───────────────────────────────────────── */
-  function factionOf(item, playerId) {
-    var teams = item.teams || {};
-    for (var key in teams) {
-      var players = (teams[key] && teams[key].players) || [];
-      if (players.some(function (p) { return p.player_id === playerId; })) return key;
-    }
-    return null;
-  }
-
-  function renderMatchesTable(items, playerId) {
-    if (!items || !items.length) return '<div class="state-box">No matches found.</div>';
-    var rows = items.map(function (m) {
-      var faction     = factionOf(m, playerId);
-      var winner      = m.results && m.results.winner;
-      var win         = faction && winner ? (faction === winner) : null;
-      var score       = m.results && m.results.score
-        ? (m.results.score[faction] + ':' + m.results.score[faction === 'faction1' ? 'faction2' : 'faction1'])
-        : '—';
-      var eloChange   = m.elo_changes && faction ? (m.elo_changes[faction] || null) : null;
-      var mapName     = (m.voting && m.voting.map && m.voting.map.pick && m.voting.map.pick[0]) || m.game_mode || '—';
-      var mapInitials = mapName.replace('de_', '').slice(0, 3).toUpperCase();
-      var resClass    = win === null ? 'live' : (win ? 'win' : 'loss');
-      var resLabel    = win === null ? 'Live' : (win ? score : score);
-      var eloHtml     = '—';
-      if (eloChange !== null) {
-        var n = parseInt(eloChange, 10);
-        eloHtml = n > 0
-          ? '<span class="elo-change pos">+' + n + '</span>'
-          : n < 0 ? '<span class="elo-change neg">' + n + '</span>'
-          : '<span class="elo-change neu">±0</span>';
-      }
-      var date = formatDate(m.finished_at);
-      var matchIdShort = m.match_id ? m.match_id.slice(0, 18) + '…' : '—';
-
-      return '<tr data-match="' + esc(m.match_id) + '" data-player="' + esc(playerId) + '">' +
-        '<td><div class="match-map-cell"><div class="map-thumb">' + esc(mapInitials) + '</div><span class="map-name">' + esc(mapName) + '</span></div></td>' +
-        '<td><span class="result-badge ' + resClass + '">' + resLabel + '</span></td>' +
-        '<td>' + eloHtml + '</td>' +
-        '<td style="color:var(--muted2)">' + esc(date) + '</td>' +
-        '<td style="color:var(--muted2)">—</td>' +
-        '<td style="color:var(--muted2)">—</td>' +
-        '<td style="color:var(--muted2)">—</td>' +
-        '<td class="match-id-cell">' + esc(matchIdShort) + '</td>' +
-        '</tr>' +
-        '<tr class="match-detail-row"><td colspan="8"><div class="match-detail-inner" id="detail-' + esc(m.match_id) + '"></div></td></tr>';
-    }).join('');
-
-    return '<div class="matches-table-wrap"><table class="matches-table">' +
-      '<thead><tr>' +
-        '<th>Map</th><th>Result</th><th>Elo</th><th>Date</th><th>MVPs</th><th>Kills</th><th>Deaths</th><th>Match ID</th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
-  }
-
-  async function loadMatchDetail(matchId, playerId, box) {
-    box.classList.add('show');
-    box.innerHTML = '<div style="color:var(--muted);font-size:9px;padding:4px 0"><span class="spinner"></span> Loading match stats…</div>';
-    try {
-      var data = await api('/api/match/' + matchId + '/stats');
-      var round = data.rounds && data.rounds[0];
-      if (!round) { box.innerHTML = '<div style="color:var(--muted);font-size:9px">No stats for this match.</div>'; return; }
-      var rs = round.round_stats || {};
-      var infoHtml = '<div class="detail-round-info">Map: <b>' + esc(rs.Map || '—') + '</b> &nbsp;·&nbsp; Score: <b>' + esc(rs.Score || '—') + '</b></div>';
-      var teamsHtml = '<div class="detail-teams">' + (round.teams || []).map(function (t) {
-        var teamName = (t.team_stats && t.team_stats.Team) || 'Team';
-        var playersHtml = (t.players || []).map(function (p) {
-          var ps = p.player_stats || {};
-          var isMe = p.player_id === playerId;
-          return '<div class="detail-player' + (isMe ? ' me' : '') + '">' +
-            '<span>' + esc(p.nickname) + '</span>' +
-            '<span class="kda">' + esc(ps.Kills || '0') + '/' + esc(ps.Deaths || '0') + '/' + esc(ps.Assists || '0') +
-            (ps['Headshots %'] ? ' &nbsp;<span style="color:var(--muted)">' + esc(ps['Headshots %']) + '% HS</span>' : '') + '</span>' +
-            '</div>';
-        }).join('');
-        return '<div class="detail-team"><div class="detail-team-name">' + esc(teamName) + '</div>' + playersHtml + '</div>';
-      }).join('') + '</div>';
-      box.innerHTML = infoHtml + teamsHtml;
-    } catch (e) {
-      box.innerHTML = '<div style="color:var(--red);font-size:9px">' + esc(e.message) + '</div>';
-    }
-  }
-
-  function wireMatchRows(container) {
-    container.querySelectorAll('tbody tr[data-match]').forEach(function (tr) {
-      tr.addEventListener('click', function () {
-        var matchId  = tr.dataset.match;
-        var playerId = tr.dataset.player;
-        var box      = document.getElementById('detail-' + matchId);
-        if (!box) return;
-        if (box.classList.contains('show')) { box.classList.remove('show'); return; }
-        loadMatchDetail(matchId, playerId, box);
-      });
-    });
-  }
-
-  /* ── history section ─────────────────────────────────────── */
-  async function loadHistoryInto(id, playerId, limit) {
-    var el = document.getElementById('history-body-' + id);
-    if (!el) return;
-    el.innerHTML = '<tr><td colspan="8" style="padding:14px;color:var(--muted);font-size:9px"><span class="spinner"></span> Loading…</td></tr>';
-    try {
-      var hist = await api('/api/player-id/' + playerId + '/history?limit=' + limit);
-      var items = hist.items || [];
-      if (!items.length) { el.innerHTML = '<tr><td colspan="8" style="padding:14px;color:var(--muted);font-size:9px">No matches found.</td></tr>'; return; }
-      var rows = items.map(function (m) {
-        var faction   = factionOf(m, playerId);
-        var winner    = m.results && m.results.winner;
-        var win       = faction && winner ? (faction === winner) : null;
-        var score     = m.results && m.results.score
-          ? (m.results.score[faction] + ':' + m.results.score[faction === 'faction1' ? 'faction2' : 'faction1'])
-          : '—';
-        var eloChange = m.elo_changes && faction ? (m.elo_changes[faction] || null) : null;
-        var mapName   = (m.voting && m.voting.map && m.voting.map.pick && m.voting.map.pick[0]) || m.game_mode || '—';
-        var mapInitials = mapName.replace('de_', '').slice(0, 3).toUpperCase();
-        var resClass  = win === null ? 'live' : (win ? 'win' : 'loss');
-        var resLabel  = win === null ? 'Live' : score;
-        var eloHtml   = '—';
-        if (eloChange !== null) {
-          var n = parseInt(eloChange, 10);
-          eloHtml = n > 0 ? '<span class="elo-change pos">+' + n + '</span>' : n < 0 ? '<span class="elo-change neg">' + n + '</span>' : '<span class="elo-change neu">±0</span>';
-        }
-        var date = formatDate(m.finished_at);
-        var matchIdShort = m.match_id ? m.match_id.slice(0, 18) + '…' : '—';
-        return '<tr data-match="' + esc(m.match_id) + '" data-player="' + esc(playerId) + '">' +
-          '<td><div class="match-map-cell"><div class="map-thumb">' + esc(mapInitials) + '</div><span class="map-name">' + esc(mapName) + '</span></div></td>' +
-          '<td><span class="result-badge ' + resClass + '">' + resLabel + '</span></td>' +
-          '<td>' + eloHtml + '</td>' +
-          '<td style="color:var(--muted2)">' + esc(date) + '</td>' +
-          '<td style="color:var(--muted2)">—</td>' +
-          '<td style="color:var(--muted2)">—</td>' +
-          '<td style="color:var(--muted2)">—</td>' +
-          '<td class="match-id-cell">' + esc(matchIdShort) + '</td>' +
-          '</tr>' +
-          '<tr class="match-detail-row"><td colspan="8"><div class="match-detail-inner" id="detail-' + esc(m.match_id) + '"></div></td></tr>';
+async function openDetail(mid,pid,box){
+  box.classList.add('show');
+  box.innerHTML=`<span class="spin"></span> Loading…`;
+  try{
+    var d=await api('/api/match/'+mid+'/stats');
+    var rnd=d.rounds&&d.rounds[0];
+    if(!rnd){ box.innerHTML='<span style="color:var(--sub);font-size:12px">No stats for this match.</span>'; return; }
+    var rs=rnd.round_stats||{};
+    var meta=`<div class="detail-meta">Map: <b>${esc(rs.Map||'—')}</b> · Score: <b>${esc(rs.Score||'—')}</b></div>`;
+    var teams=`<div class="detail-teams">${(rnd.teams||[]).map(t=>{
+      var tn=(t.team_stats&&t.team_stats.Team)||'Team';
+      var ps=(t.players||[]).map(p=>{
+        var s=p.player_stats||{}, me=p.player_id===pid;
+        return `<div class="d-player${me?' me':''}"><span>${esc(p.nickname)}</span><span class="kda">${esc(s.Kills||0)}/${esc(s.Deaths||0)}/${esc(s.Assists||0)}</span></div>`;
       }).join('');
-      el.innerHTML = rows;
-      wireMatchRows(el.closest('table'));
-    } catch (e) {
-      el.innerHTML = '<tr><td colspan="8" style="padding:14px;color:var(--red);font-size:9px">' + esc(e.message) + '</td></tr>';
-    }
+      return `<div class="detail-team"><div class="team-name">${esc(tn)}</div>${ps}</div>`;
+    }).join('')}</div>`;
+    box.innerHTML=meta+teams;
+  }catch(e){ box.innerHTML=`<span style="color:var(--red);font-size:12px">${esc(e.message)}</span>`; }
+}
+
+/* ── MAPS ── */
+function renderMaps(segs){
+  var maps=(segs||[]).filter(s=>s.type==='Map').map(s=>({
+    name:s.label||'Map',
+    matches:parseInt((s.stats||{}).Matches,10)||0,
+    wr:parseFloat((s.stats||{})['Win Rate %'])||0,
+    kd:(s.stats||{})['K/D Ratio']||(s.stats||{})['Average K/D Ratio']||'—'
+  })).filter(m=>m.matches>0).sort((a,b)=>b.matches-a.matches).slice(0,8);
+  if(!maps.length) return '<div class="state">No map data.</div>';
+  return `<div class="tbl-wrap"><div class="map-bars" style="padding:4px 16px">${maps.map(m=>{
+    var cls=m.wr>=50?'good':'bad';
+    return `<div class="map-bar-row">
+      <div class="map-bar-name">${esc(m.name)}</div>
+      <div class="map-bar-track"><div class="map-bar-fill ${cls}" style="width:${Math.min(m.wr,100)}%"></div></div>
+      <div class="map-bar-meta">${Math.round(m.wr)}% · KD ${esc(m.kd)} · ${m.matches}m</div>
+    </div>`;
+  }).join('')}</div></div>`;
+}
+
+/* ── LOAD SLOT ── */
+async function load(id, nick){
+  slotState[id]=slotState[id]||{limit:20};
+  setPanel(id,`<div class="state"><span class="spin"></span> Searching for <b>${esc(nick)}</b>…</div>`);
+
+  var player;
+  try{ player=await api('/api/player/'+encodeURIComponent(nick)); }
+  catch(e){
+    var sugg='';
+    try{
+      var s=await api('/api/search?nickname='+encodeURIComponent(nick));
+      if(s.items&&s.items.length) sugg='<div style="margin-top:10px">'+s.items.slice(0,5).map(p=>`<span class="chip" data-nick="${esc(p.nickname)}">${esc(p.nickname)}</span>`).join('')+'</div>';
+    }catch(_){}
+    setPanel(id,`<div class="state err">Player «${esc(nick)}» not found: ${esc(e.message)}${sugg}</div>`);
+    document.getElementById('panel-'+id)&&document.getElementById('panel-'+id).querySelectorAll('[data-nick]').forEach(c=>{
+      c.addEventListener('click',()=>{ document.getElementById('inp-'+id).value=c.dataset.nick; load(id,c.dataset.nick); });
+    });
+    return;
   }
 
-  /* ── main load ───────────────────────────────────────────── */
-  async function loadSlot(id, nickname) {
-    slotState[id] = slotState[id] || { limit: 20, filter: 'last20' };
-    setPanel(id, '<div class="state-box loading"><span class="spinner"></span>&nbsp; Searching for «' + esc(nickname) + '»…</div>');
+  var gi=(player.games&&player.games.cs2)||{};
+  var lvl=gi.skill_level||'—', elo=gi.faceit_elo||'—';
 
-    var player;
-    try {
-      player = await api('/api/player/' + encodeURIComponent(nickname));
-    } catch (e) {
-      var suggestHtml = '';
-      try {
-        var search = await api('/api/search?nickname=' + encodeURIComponent(nickname));
-        if (search.items && search.items.length) {
-          suggestHtml = '<div style="margin-top:10px">' +
-            search.items.slice(0, 6).map(function (p) {
-              return '<span class="suggest-chip" data-pick="' + esc(p.player_id) + '" data-nick="' + esc(p.nickname) + '">' + esc(p.nickname) + '</span>';
-            }).join('') + '</div>';
-        }
-      } catch (_) {}
-      setPanel(id, '<div class="state-box error">Player «' + esc(nickname) + '» not found: ' + esc(e.message) + suggestHtml + '</div>');
-      var panelEl = document.getElementById('panel-' + id);
-      if (panelEl) panelEl.querySelectorAll('[data-pick]').forEach(function (chip) {
-        chip.addEventListener('click', function () {
-          document.getElementById('input-' + id).value = chip.dataset.nick;
-          loadSlot(id, chip.dataset.nick);
-        });
-      });
-      return;
-    }
+  var lim=slotState[id].limit;
+  var html=`
+    <div class="player-card">
+      ${player.avatar?`<img class="avatar" src="${esc(player.avatar)}" alt="">`:`<div class="avatar-fallback">${esc((player.nickname||'??').slice(0,2).toUpperCase())}</div>`}
+      <div>
+        <div class="player-name">${esc(player.nickname||nick)}</div>
+        <div class="player-tags">
+          <span class="tag accent">ELO ${esc(elo)}</span>
+          <span class="tag">Level ${esc(lvl)}</span>
+          ${player.country?`<span class="tag">${esc(player.country.toUpperCase())}</span>`:''}
+          <span class="tag">CS2</span>
+        </div>
+      </div>
+      ${player.faceit_url?`<a class="player-link" href="${esc(player.faceit_url)}" target="_blank">FACEIT ↗</a>`:''}
+    </div>
 
-    var gamesInfo = (player.games && (player.games.cs2)) || {};
-    var level = gamesInfo.skill_level || '—';
-    var elo   = gamesInfo.faceit_elo  || '—';
+    <div id="stats-${id}"><div class="state"><span class="spin"></span></div></div>
 
-    var filterTabs = ['Normal','Pro','Last 20','Last 50','Last 100','All Matches'];
-    var activeTab  = 'Last 20';
+    <div class="section">
+      <div class="section-head">
+        <span class="section-title">Match History</span>
+        <div class="hist-filters" id="hf-${id}">
+          ${[10,20,50,100].map(n=>`<button class="hf${n===lim?' active':''}" data-n="${n}">${n}</button>`).join('')}
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Map</th><th>Result</th><th>ELO</th><th>Date</th><th>Kills</th><th>Deaths</th><th>Match ID</th></tr></thead>
+          <tbody id="tbody-${id}"><tr><td colspan="7" class="muted" style="padding:14px"><span class="spin"></span></td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
-    var html = '';
+    <div class="section">
+      <div class="section-head"><span class="section-title">Maps</span></div>
+      <div id="maps-${id}"><div class="state"><span class="spin"></span></div></div>
+    </div>
 
-    /* player head */
-    html += '<div class="player-head">';
-    html += '<div class="player-avatar-wrap">';
-    html += player.avatar
-      ? '<img class="player-avatar" src="' + esc(player.avatar) + '" alt="">'
-      : '<div class="player-avatar-fallback">' + esc((player.nickname || '??').slice(0, 2).toUpperCase()) + '</div>';
-    html += '<div class="player-level-badge">' + esc(level) + '</div>';
-    html += '</div>';
-    html += '<div class="player-info">';
-    html += '<div class="player-name">' + esc(player.nickname || nickname) + '</div>';
-    html += '<div class="player-meta">';
-    html += '<span class="elo-badge">⬡ ' + esc(elo) + ' ELO</span>';
-    if (player.country) html += '<span class="meta-tag">🌍 ' + esc(player.country.toUpperCase()) + '</span>';
-    html += '<span class="meta-tag">CS2</span>';
-    html += '<span class="meta-tag">Level ' + esc(level) + '</span>';
-    html += '</div></div>';
-    html += '<div class="player-head-right">' +
-      (player.faceit_url ? '<a href="' + esc(player.faceit_url) + '" target="_blank" style="color:var(--orange);font-size:9px;font-weight:700;text-decoration:none">View on FACEIT ↗</a>' : '') +
-      '</div>';
-    html += '</div>';
+    <div id="raw-wrap-${id}"></div>
+  `;
+  setPanel(id, html);
 
-    /* stats filter */
-    html += '<div class="stats-filter-bar">';
-    html += '<span class="filter-label">Stats Filter</span>';
-    filterTabs.forEach(function (tab) {
-      html += '<button class="filter-tab' + (tab === activeTab ? ' active' : '') + '" data-ftab="' + esc(tab) + '" data-slot="' + id + '">' + esc(tab) + '</button>';
-    });
-    html += '</div>';
-
-    /* stat tiles placeholder */
-    html += '<div id="tiles-' + id + '"><div class="state-box loading"><span class="spinner"></span>&nbsp; Loading stats…</div></div>';
-
-    /* matches section */
-    html += '<div class="section-header"><div class="section-title">Latest Matches</div>' +
-      '<div style="display:flex;gap:4px" id="hist-filter-' + id + '">' +
-        [10, 20, 30, 50, 100].map(function (n) {
-          return '<button class="filter-tab' + (n === slotState[id].limit ? ' active' : '') + '" data-limit="' + n + '">' + n + '</button>';
-        }).join('') +
-      '</div>' +
-      '<button class="view-more">View More</button></div>';
-    html += '<div class="matches-table-wrap"><table class="matches-table">' +
-      '<thead><tr><th>Map</th><th>Result</th><th>Elo</th><th>Date</th><th>MVPs</th><th>Kills</th><th>Deaths</th><th>Match ID</th></tr></thead>' +
-      '<tbody id="history-body-' + id + '"><tr><td colspan="8" style="padding:14px;color:var(--muted);font-size:9px"><span class="spinner"></span> Loading…</td></tr></tbody>' +
-      '</table></div>';
-
-    /* maps section */
-    html += '<div class="section-header"><div class="section-title">Maps</div><button class="view-more">View More</button></div>';
-    html += '<div id="maps-' + id + '"><div class="state-box loading"><span class="spinner"></span>&nbsp; Loading…</div></div>';
-
-    /* raw stats toggle */
-    html += '<div id="raw-wrap-' + id + '"></div>';
-
-    setPanel(id, html);
-
-    /* wire history limit filter */
-    document.getElementById('hist-filter-' + id).querySelectorAll('button[data-limit]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        document.getElementById('hist-filter-' + id).querySelectorAll('button').forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-        slotState[id].limit = parseInt(btn.dataset.limit, 10);
-        loadHistoryInto(id, player.player_id, slotState[id].limit);
-      });
-    });
-
-    /* load stats */
-    try {
-      var stats   = await api('/api/player-id/' + player.player_id + '/stats');
-      var lifetime = stats.lifetime || {};
-
-      var tilesEl = document.getElementById('tiles-' + id);
-      if (tilesEl) tilesEl.innerHTML = renderTiles(lifetime);
-
-      var mapsEl = document.getElementById('maps-' + id);
-      if (mapsEl) mapsEl.innerHTML = renderMaps(stats.segments);
-
-      var rawWrap = document.getElementById('raw-wrap-' + id);
-      if (rawWrap && Object.keys(lifetime).length) {
-        var rows = Object.keys(lifetime)
-          .filter(function (k) { return k !== 'Recent Results'; })
-          .map(function (k) { return '<div class="raw-row"><span class="k">' + esc(k) + '</span><span>' + esc(lifetime[k]) + '</span></div>'; })
-          .join('');
-        rawWrap.innerHTML = '<button class="more-toggle" id="rtoggle-' + id + '">Show all API metrics ▾</button><div class="raw-stats" id="rbox-' + id + '">' + rows + '</div>';
-        document.getElementById('rtoggle-' + id).addEventListener('click', function () {
-          var box = document.getElementById('rbox-' + id);
-          box.classList.toggle('show');
-          document.getElementById('rtoggle-' + id).textContent = box.classList.contains('show') ? 'Hide all metrics ▴' : 'Show all API metrics ▾';
-        });
-      }
-    } catch (e) {
-      var tilesEl2 = document.getElementById('tiles-' + id);
-      if (tilesEl2) tilesEl2.innerHTML = '<div class="state-box error">' + esc(e.message) + '</div>';
-    }
-
-    loadHistoryInto(id, player.player_id, slotState[id].limit);
-  }
-
-  /* ── search trigger ──────────────────────────────────────── */
-  goBtn.addEventListener('click', function () {
-    slots.forEach(function (s) {
-      var input = document.getElementById('input-' + s.id);
-      var nick  = input && input.value.trim();
-      if (nick) loadSlot(s.id, nick);
+  document.getElementById('hf-'+id).querySelectorAll('[data-n]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.getElementById('hf-'+id).querySelectorAll('[data-n]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      slotState[id].limit=+b.dataset.n;
+      loadHistory(id,player.player_id,slotState[id].limit);
     });
   });
 
-  searchWrap.addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') goBtn.click();
-  });
+  try{
+    var st=await api('/api/player-id/'+player.player_id+'/stats');
+    var lt=st.lifetime||{};
+    document.getElementById('stats-'+id).innerHTML=renderStats(lt);
+    document.getElementById('maps-'+id).innerHTML=renderMaps(st.segments);
 
-  /* ── init ────────────────────────────────────────────────── */
-  renderSearchInputs();
+    var rw=document.getElementById('raw-wrap-'+id);
+    if(rw&&Object.keys(lt).length){
+      var rows=Object.keys(lt).filter(k=>k!=='Recent Results').map(k=>`<div class="raw-row"><span class="raw-key">${esc(k)}</span><span>${esc(lt[k])}</span></div>`).join('');
+      rw.innerHTML=`<button class="raw-toggle" id="rt-${id}">Show all metrics ↓</button><div class="raw-box" id="rb-${id}">${rows}</div>`;
+      document.getElementById('rt-'+id).addEventListener('click',()=>{
+        document.getElementById('rb-'+id).classList.toggle('show');
+        document.getElementById('rt-'+id).textContent=document.getElementById('rb-'+id).classList.contains('show')?'Hide metrics ↑':'Show all metrics ↓';
+      });
+    }
+  }catch(e){
+    document.getElementById('stats-'+id).innerHTML=`<div class="state err">${esc(e.message)}</div>`;
+  }
+
+  loadHistory(id,player.player_id,lim);
+}
+
+renderInputs();
 })();
 </script>
 </body>
