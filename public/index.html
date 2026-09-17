@@ -22,6 +22,7 @@
   --red:     #ef4444;
   --blue:    #3b82f6;
   --yellow:  #eab308;
+  --purple:  #a855f7;
 }
 html, body { height: 100%; background: var(--bg); color: var(--text); }
 body { font-family: 'Geist', system-ui, sans-serif; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
@@ -51,19 +52,18 @@ input, button { font: inherit; }
 .search-heading { font-size: 20px; font-weight: 600; letter-spacing: -.4px; margin-bottom: 4px; }
 .search-sub { font-size: 13px; color: var(--sub); margin-bottom: 20px; }
 .search-row { display: flex; gap: 8px; flex-wrap: wrap; }
-
 .search-wrap { position: relative; flex: 1; min-width: 180px; }
 .search-field { width: 100%; height: 40px; padding: 0 14px; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; color: var(--text); font-size: 14px; outline: none; transition: border-color .15s; }
 .search-field::placeholder { color: var(--sub); }
-.search-field:focus { border-color: var(--border2); box-shadow: 0 0 0 3px rgba(255,107,0,.07); }
-.autocomplete { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; z-index: 100; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.search-field:focus { box-shadow: 0 0 0 3px rgba(255,107,0,.07); border-color: rgba(255,107,0,.4); }
+.autocomplete { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; overflow: hidden; z-index: 100; display: none; box-shadow: 0 8px 24px rgba(0,0,0,.5); }
 .autocomplete.show { display: block; }
 .ac-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; cursor: pointer; font-size: 13px; transition: background .08s; }
 .ac-item:hover, .ac-item.focused { background: var(--border); }
-.ac-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--border2); object-fit: cover; flex-shrink: 0; }
+.ac-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--border2); object-fit: cover; flex-shrink: 0; display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--sub2); overflow:hidden; }
+.ac-avatar img { width:100%;height:100%;object-fit:cover; }
 .ac-name { font-weight: 500; }
-.ac-meta { font-size: 11px; color: var(--sub); margin-left: auto; }
-
+.ac-meta { font-size: 11px; color: var(--sub); margin-left: auto; font-family: 'Geist Mono', monospace; }
 .search-btn { height: 40px; padding: 0 18px; background: var(--text); color: var(--bg); border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
 .search-btn:hover { opacity: .88; }
 .search-btn:disabled { opacity: .4; cursor: default; }
@@ -77,61 +77,105 @@ input, button { font: inherit; }
 .panels.dual { grid-template-columns: 1fr 1fr; }
 
 /* EMPTY */
-.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; color: var(--sub); }
-.empty-icon { font-size: 28px; margin-bottom: 12px; opacity: .3; }
+.empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px; text-align: center; }
+.empty-icon { font-size: 28px; margin-bottom: 12px; opacity: .2; }
 .empty-title { font-size: 15px; font-weight: 500; color: var(--sub2); margin-bottom: 6px; }
-.empty-sub { font-size: 13px; max-width: 260px; line-height: 1.6; }
+.empty-sub { font-size: 13px; color: var(--sub); max-width: 260px; line-height: 1.6; }
 
 /* PLAYER CARD */
-.player-card { display: flex; align-items: center; gap: 14px; padding-bottom: 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
-.avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: var(--surface); border: 1px solid var(--border2); flex-shrink: 0; }
-.avatar-fallback { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--sub2); }
+.player-card { display: flex; align-items: center; gap: 14px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border); }
+.avatar { width: 46px; height: 46px; border-radius: 50%; object-fit: cover; background: var(--surface); border: 1px solid var(--border2); flex-shrink: 0; }
+.avatar-fallback { width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; background: var(--surface); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--sub2); }
 .player-name { font-size: 17px; font-weight: 600; letter-spacing: -.3px; }
-.player-tags { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; }
+.player-tags { display: flex; gap: 6px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
 .tag { font-size: 11px; font-weight: 500; padding: 2px 8px; border: 1px solid var(--border2); border-radius: 99px; color: var(--sub2); }
 .tag.accent { border-color: rgba(255,107,0,.35); color: var(--accent); }
 .tag.live { border-color: rgba(34,197,94,.35); color: var(--green); animation: pulse 2s infinite; }
+.tag.hot  { border-color: rgba(251,146,60,.35); color: #fb923c; }
+.tag.cold { border-color: rgba(96,165,250,.35); color: #60a5fa; }
+.tag.peak { border-color: rgba(168,85,247,.35); color: var(--purple); }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-.player-actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-.player-link { font-size: 12px; color: var(--sub); text-decoration: none; }
-.player-link:hover { color: var(--text); }
+.player-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.player-link { font-size: 12px; color: var(--sub); text-decoration: none; padding: 5px 10px; border: 1px solid var(--border2); border-radius: 6px; }
+.player-link:hover { color: var(--text); background: var(--surface); }
+
+/* ACTION BTNS */
+.action-btn { font-size: 12px; color: var(--sub); background: none; border: 1px solid var(--border2); border-radius: 6px; padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all .15s; }
+.action-btn:hover { color: var(--text); border-color: var(--border2); background: var(--surface); }
+.action-btn.copied { color: var(--green); border-color: rgba(34,197,94,.3); }
+
+/* SHARE TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 16px; font-size: 13px; color: var(--text); opacity: 0; transition: all .2s; pointer-events: none; z-index: 999; white-space: nowrap; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* FORM BANNER */
+.form-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
+.form-banner.hot  { background: rgba(251,146,60,.07);  border: 1px solid rgba(251,146,60,.2); }
+.form-banner.cold { background: rgba(96,165,250,.07);  border: 1px solid rgba(96,165,250,.2); }
+.form-banner.rise { background: rgba(34,197,94,.07);   border: 1px solid rgba(34,197,94,.2); }
+.form-banner.norm { background: var(--surface);        border: 1px solid var(--border); }
+.form-icon { font-size: 18px; }
+.form-text { font-weight: 500; }
+.form-sub  { font-size: 12px; color: var(--sub); margin-left: 4px; }
 
 /* LIVE BANNER */
-.live-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(34,197,94,.05); border: 1px solid rgba(34,197,94,.15); border-radius: 8px; margin-bottom: 20px; font-size: 13px; }
+.live-banner { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(34,197,94,.05); border: 1px solid rgba(34,197,94,.15); border-radius: 8px; margin-bottom: 16px; font-size: 13px; display: none; }
 .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); flex-shrink: 0; animation: pulse 1.5s infinite; }
 .live-text { color: var(--green); font-weight: 500; }
-.live-map { color: var(--sub2); margin-left: 4px; }
+.live-map  { color: var(--sub2); margin-left: 4px; }
 .live-score { font-family: 'Geist Mono', monospace; font-size: 12px; color: var(--sub); margin-left: auto; }
 
-/* STREAK STRIP */
-.streak-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-.streak-label { font-size: 12px; color: var(--sub); width: 80px; flex-shrink: 0; }
+/* STREAK */
+.streak-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.streak-label { font-size: 12px; color: var(--sub); width: 52px; flex-shrink: 0; }
 .streak-strip { display: flex; gap: 3px; }
 .streak-pill { width: 20px; height: 6px; border-radius: 3px; }
 .streak-pill.w { background: var(--green); }
 .streak-pill.l { background: var(--red); }
 .streak-pill.d { background: var(--border2); }
-.streak-current { font-size: 12px; color: var(--sub); font-family: 'Geist Mono', monospace; }
+.streak-stat { font-size: 12px; color: var(--sub); font-family: 'Geist Mono', monospace; }
 
 /* STATS GRID */
-.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 28px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 24px; }
 .stat-cell { background: var(--bg); padding: 18px 20px; }
 .stat-val { font-family: 'Geist Mono', monospace; font-size: 22px; font-weight: 500; letter-spacing: -.5px; line-height: 1; }
 .stat-lbl { font-size: 11px; color: var(--sub); margin-top: 5px; }
 
+/* BEST/WORST MAPS */
+.map-badges { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+.map-badge { padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 12px; display: flex; flex-direction: column; gap: 3px; min-width: 140px; }
+.map-badge.best { border-color: rgba(34,197,94,.25); background: rgba(34,197,94,.04); }
+.map-badge.worst { border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.04); }
+.map-badge-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; color: var(--sub); }
+.map-badge-name { font-size: 14px; font-weight: 600; }
+.map-badge-stat { font-size: 11px; color: var(--sub2); font-family: 'Geist Mono', monospace; }
+.map-badge.best .map-badge-name { color: var(--green); }
+.map-badge.worst .map-badge-name { color: var(--red); }
+
+/* ELO PROGRESS */
+.elo-progress-wrap { border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 24px; }
+.elo-progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 12px; }
+.elo-progress-title { font-weight: 600; color: var(--sub2); text-transform: uppercase; letter-spacing: .5px; }
+.elo-progress-pct { font-family: 'Geist Mono', monospace; color: var(--sub); }
+.elo-level-row { display: flex; align-items: center; gap: 10px; }
+.elo-level-num { font-size: 11px; color: var(--sub); width: 16px; text-align: center; flex-shrink: 0; }
+.elo-track { flex: 1; height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+.elo-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .6s ease; }
+.elo-progress-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--sub); font-family: 'Geist Mono', monospace; }
+
 /* ELO CHART */
-.elo-chart-wrap { border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 28px; }
+.elo-chart-wrap { border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; }
 .elo-chart-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; }
 .elo-chart-title { font-size: 12px; font-weight: 600; color: var(--sub2); text-transform: uppercase; letter-spacing: .5px; }
-.elo-chart-range { font-size: 11px; color: var(--sub); }
+.elo-chart-meta { display: flex; gap: 14px; align-items: baseline; }
+.elo-chart-range { font-size: 11px; color: var(--sub); font-family: 'Geist Mono', monospace; }
+.elo-peak-tag { font-size: 10px; color: var(--purple); background: rgba(168,85,247,.1); border: 1px solid rgba(168,85,247,.2); border-radius: 99px; padding: 1px 7px; font-weight: 600; }
 .elo-svg { width: 100%; height: 64px; display: block; }
 
 /* SECTION */
-.section { margin-bottom: 28px; }
+.section { margin-bottom: 24px; }
 .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .section-title { font-size: 12px; font-weight: 600; color: var(--sub2); text-transform: uppercase; letter-spacing: .5px; }
-
-/* HIST FILTERS */
 .hist-filters { display: flex; gap: 4px; }
 .hf { padding: 3px 10px; border-radius: 5px; border: 1px solid transparent; font-size: 12px; font-weight: 500; color: var(--sub); background: none; cursor: pointer; }
 .hf:hover { color: var(--sub2); }
@@ -157,10 +201,9 @@ tbody td { padding: 9px 14px; font-size: 13px; vertical-align: middle; }
 .d-player.me { color: var(--accent); font-weight: 600; }
 .d-kda { font-family: 'Geist Mono', monospace; color: var(--sub); }
 .d-player.me .d-kda { color: var(--accent); }
-
 .map-cell { display: flex; align-items: center; gap: 8px; }
 .map-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
-.map-name { font-weight: 500; }
+.map-name-t { font-weight: 500; }
 .res { font-size: 12px; font-weight: 600; font-family: 'Geist Mono', monospace; }
 .res.w { color: var(--green); }
 .res.l { color: var(--red); }
@@ -192,17 +235,6 @@ td.muted { color: var(--sub); font-size: 12px; }
 .raw-row:nth-child(odd) { background: var(--surface); }
 .raw-key { color: var(--sub); }
 
-/* ELO PROGRESS */
-.elo-progress-wrap { border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; margin-bottom: 28px; }
-.elo-progress-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 12px; }
-.elo-progress-title { font-weight: 600; color: var(--sub2); text-transform: uppercase; letter-spacing: .5px; }
-.elo-progress-pct { font-family: 'Geist Mono', monospace; color: var(--sub); }
-.elo-level-row { display: flex; align-items: center; gap: 10px; }
-.elo-level-num { font-size: 11px; color: var(--sub); width: 16px; text-align: center; }
-.elo-track { flex: 1; height: 4px; background: var(--border2); border-radius: 2px; overflow: hidden; }
-.elo-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .6s ease; }
-.elo-progress-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--sub); font-family: 'Geist Mono', monospace; }
-
 /* STATES */
 .state { padding: 14px 16px; font-size: 13px; color: var(--sub); border: 1px solid var(--border); border-radius: 8px; }
 .state.err { color: var(--red); border-color: rgba(239,68,68,.2); }
@@ -213,7 +245,6 @@ td.muted { color: var(--sub); font-size: 12px; }
 
 footer { margin-top: 48px; font-size: 12px; color: var(--sub); }
 
-/* RESPONSIVE */
 @media (max-width: 800px) {
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
@@ -263,7 +294,7 @@ footer { margin-top: 48px; font-size: 12px; color: var(--sub); }
     <p class="search-sub">Search any FACEIT CS2 player to view their statistics.</p>
     <div class="search-row" id="search-row"></div>
     <div style="margin-top:8px">
-      <button class="compare-btn" id="compare-btn" type="button">Compare two players</button>
+      <button class="compare-btn" id="compare-btn">Compare two players</button>
     </div>
   </div>
 
@@ -276,180 +307,199 @@ footer { margin-top: 48px; font-size: 12px; color: var(--sub); }
       </div>
     </div>
   </div>
-
-  <footer>FACEIT Analyzer · data from FACEIT Data API v4</footer>
+  <footer>FACEIT Analyzer · FACEIT Data API v4</footer>
 </div>
 </main>
 </div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
 <script>
 (function(){
 'use strict';
 
 /* ── utils ── */
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-async function api(path){ const r=await fetch(path); const d=await r.json().catch(()=>null); if(!r.ok) throw new Error((d&&d.error)||'Error '+r.status); return d; }
+async function api(p){ const r=await fetch(p); const d=await r.json().catch(()=>null); if(!r.ok) throw new Error((d&&d.error)||'Error '+r.status); return d; }
 function fdate(ts){ if(!ts) return '—'; return new Date(ts*1000).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}); }
-function pick(lt,keys){ for(var k of keys) if(lt[k]!=null) return lt[k]; return null; }
+function pick(lt,keys){ for(const k of keys) if(lt[k]!=null) return lt[k]; return null; }
+function toast(msg,ms=2200){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),ms); }
 
-/* ── ELO level thresholds ── */
-var ELO_LEVELS=[0,500,750,900,1050,1200,1350,1530,1710,1900,2100,5000];
+/* ── Shareable URL ── */
+function applyUrlPlayer(){
+  const p=new URLSearchParams(location.search).get('player');
+  if(p){ setTimeout(()=>{ const inp=document.getElementById('inp-0'); if(inp){ inp.value=p; load(0,p); }},100); }
+}
+function pushUrl(nick){
+  const u=new URL(location.href); u.searchParams.set('player',nick); history.replaceState(null,'',u); }
+
+/* ── ELO levels ── */
+const ELO_LVL=[0,500,750,900,1050,1200,1350,1530,1710,1900,2100,5000];
 function eloProgress(elo){
-  var e=parseInt(elo,10)||0;
-  for(var i=0;i<ELO_LEVELS.length-1;i++){
-    if(e>=ELO_LEVELS[i]&&e<ELO_LEVELS[i+1]){
-      var pct=Math.round((e-ELO_LEVELS[i])/(ELO_LEVELS[i+1]-ELO_LEVELS[i])*100);
-      return {level:i+1,pct,current:e,min:ELO_LEVELS[i],max:ELO_LEVELS[i+1]};
+  const e=parseInt(elo,10)||0;
+  for(let i=0;i<ELO_LVL.length-1;i++){
+    if(e>=ELO_LVL[i]&&e<ELO_LVL[i+1]){
+      const pct=Math.round((e-ELO_LVL[i])/(ELO_LVL[i+1]-ELO_LVL[i])*100);
+      return {level:i+1,pct,current:e,min:ELO_LVL[i],max:ELO_LVL[i+1],wins:Math.ceil((ELO_LVL[i+1]-e)/25)};
     }
   }
-  return {level:10,pct:100,current:e,min:ELO_LEVELS[9],max:ELO_LEVELS[10]};
+  return {level:10,pct:100,current:e,min:ELO_LVL[9],max:ELO_LVL[10],wins:0};
 }
 
-/* ── ELO sparkline SVG ── */
-function buildChart(eloPoints){
-  if(!eloPoints||eloPoints.length<2) return '';
-  var W=500,H=64,pad=4;
-  var min=Math.min(...eloPoints)-20, max=Math.max(...eloPoints)+20;
-  var scaleX=i=>(i/(eloPoints.length-1))*(W-pad*2)+pad;
-  var scaleY=v=>H-pad-(v-min)/(max-min)*(H-pad*2);
-  var pts=eloPoints.map((v,i)=>`${scaleX(i).toFixed(1)},${scaleY(v).toFixed(1)}`).join(' ');
-  // area fill
-  var areaPath=`M ${scaleX(0).toFixed(1)},${H} `+eloPoints.map((v,i)=>`L ${scaleX(i).toFixed(1)},${scaleY(v).toFixed(1)}`).join(' ')+` L ${scaleX(eloPoints.length-1).toFixed(1)},${H} Z`;
-  var last=eloPoints[eloPoints.length-1], prev=eloPoints[0];
-  var col=last>=prev?'#22c55e':'#ef4444';
+/* ── Form analysis ── */
+function analyzeForm(recent){
+  if(!recent||recent.length<3) return null;
+  const wins=recent.filter(r=>r==='1').length;
+  const wr=wins/recent.length;
+  // Check trend: first half vs second half
+  const half=Math.floor(recent.length/2);
+  const early=recent.slice(0,half).filter(r=>r==='1').length/half;
+  const late=recent.slice(half).filter(r=>r==='1').length/(recent.length-half);
+  const rising=late-early>0.2;
+  const falling=early-late>0.2;
+
+  if(wr>=0.7) return {cls:'hot',icon:'🔥',text:'Hot Streak',sub:`${Math.round(wr*100)}% WR in last ${recent.length}`};
+  if(wr<=0.3) return {cls:'cold',icon:'❄️',text:'Cold Spell',sub:`${Math.round(wr*100)}% WR in last ${recent.length}`};
+  if(rising)  return {cls:'rise',icon:'📈',text:'Rising Form',sub:`Win rate improving recently`};
+  if(falling) return {cls:'norm',icon:'📉',text:'Declining Form',sub:`Win rate dropping recently`};
+  return      {cls:'norm',icon:'➖',text:'Stable Form',sub:`${Math.round(wr*100)}% WR in last ${recent.length}`};
+}
+
+/* ── ELO chart SVG ── */
+function buildChart(pts){
+  if(!pts||pts.length<2) return '<span style="color:var(--sub);font-size:12px">Not enough data</span>';
+  const W=500,H=64,pad=4;
+  const min=Math.min(...pts)-10, max=Math.max(...pts)+10;
+  const sx=i=>(i/(pts.length-1))*(W-pad*2)+pad;
+  const sy=v=>H-pad-(v-min)/(max-min)*(H-pad*2);
+  const polyPts=pts.map((v,i)=>`${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(' ');
+  const area=`M ${sx(0).toFixed(1)},${H} `+pts.map((v,i)=>`L ${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(' ')+` L ${sx(pts.length-1).toFixed(1)},${H} Z`;
+  const last=pts[pts.length-1],first=pts[0];
+  const col=last>=first?'#22c55e':'#ef4444';
   return `<svg class="elo-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="${col}" stop-opacity=".15"/>
-        <stop offset="100%" stop-color="${col}" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="${areaPath}" fill="url(#cg)"/>
-    <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${scaleX(eloPoints.length-1).toFixed(1)}" cy="${scaleY(last).toFixed(1)}" r="3" fill="${col}"/>
+    <defs><linearGradient id="cg${Math.random().toString(36).slice(2)}" x1="0" y1="0" x2="0" y2="1" id="cgg">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".18"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#cgg)"/>
+    <polyline points="${polyPts}" fill="none" stroke="${col}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${sx(pts.length-1).toFixed(1)}" cy="${sy(last).toFixed(1)}" r="3.5" fill="${col}"/>
   </svg>`;
 }
 
-/* ── STATS ── */
-var STATS=[
-  {keys:['Win Rate %'],                          label:'Win Rate',      fmt:v=>parseFloat(v).toFixed(1)+'%'},
-  {keys:['Average Headshots %','Headshots %'],   label:'Headshots',     fmt:v=>parseFloat(v).toFixed(1)+'%'},
-  {keys:['Average K/D Ratio','K/D Ratio'],       label:'K/D Ratio',     fmt:v=>parseFloat(v).toFixed(2)},
-  {keys:['Average Kills'],                       label:'Avg Kills',     fmt:v=>parseFloat(v).toFixed(1)},
-  {keys:['Matches'],                             label:'Matches',       fmt:v=>parseInt(v,10).toLocaleString()},
-  {keys:['Wins'],                                label:'Wins',          fmt:v=>parseInt(v,10).toLocaleString()},
-  {keys:['Longest Win Streak'],                  label:'Best Streak',   fmt:v=>v},
-  {keys:['Current Win Streak'],                  label:'Current Streak',fmt:v=>v},
+/* ── Stats ── */
+const STATS=[
+  {keys:['Win Rate %'],                        label:'Win Rate',      fmt:v=>parseFloat(v).toFixed(1)+'%'},
+  {keys:['Average Headshots %','Headshots %'], label:'Headshots',     fmt:v=>parseFloat(v).toFixed(1)+'%'},
+  {keys:['Average K/D Ratio','K/D Ratio'],     label:'K/D Ratio',     fmt:v=>parseFloat(v).toFixed(2)},
+  {keys:['Average Kills'],                     label:'Avg Kills',     fmt:v=>parseFloat(v).toFixed(1)},
+  {keys:['Matches'],                           label:'Matches',       fmt:v=>parseInt(v,10).toLocaleString()},
+  {keys:['Wins'],                              label:'Wins',          fmt:v=>parseInt(v,10).toLocaleString()},
+  {keys:['Longest Win Streak'],                label:'Best Streak',   fmt:v=>v},
+  {keys:['Current Win Streak'],                label:'Current Streak',fmt:v=>v},
 ];
-
 function renderStats(lt){
-  var cells=STATS.map(s=>{ var v=pick(lt,s.keys); if(v==null) return ''; return `<div class="stat-cell"><div class="stat-val">${esc(s.fmt(v))}</div><div class="stat-lbl">${s.label}</div></div>`; }).filter(Boolean);
-  if(!cells.length) return '<div class="state">No lifetime stats available.</div>';
-  return `<div class="stats-grid">${cells.join('')}</div>`;
+  const cells=STATS.map(s=>{ const v=pick(lt,s.keys); if(v==null) return ''; return `<div class="stat-cell"><div class="stat-val">${esc(s.fmt(v))}</div><div class="stat-lbl">${s.label}</div></div>`; }).filter(Boolean);
+  return cells.length?`<div class="stats-grid">${cells.join('')}</div>`:'<div class="state">No lifetime stats.</div>';
 }
 
-/* ── ELO progress bar ── */
-function renderEloProgress(elo){
-  var p=eloProgress(elo);
-  return `<div class="elo-progress-wrap">
-    <div class="elo-progress-head">
-      <span class="elo-progress-title">ELO Progress</span>
-      <span class="elo-progress-pct">Level ${p.level} · ${p.pct}% to next</span>
-    </div>
-    <div class="elo-level-row">
-      <span class="elo-level-num">${p.level}</span>
-      <div class="elo-track"><div class="elo-fill" style="width:${p.pct}%"></div></div>
-      <span class="elo-level-num">${p.level<10?p.level+1:10}</span>
-    </div>
-    <div class="elo-progress-labels"><span>${p.min} ELO</span><span>${parseInt(elo,10)} ELO</span><span>${p.max} ELO</span></div>
-  </div>`;
-}
-
-/* ── STREAK STRIP ── */
-function renderStreak(recent){
-  if(!recent||!recent.length) return '';
-  var pills=recent.map(r=>{
-    var cls=r==='1'?'w':r==='0'?'l':'d';
-    return `<div class="streak-pill ${cls}" title="${cls==='w'?'Win':cls==='l'?'Loss':'—'}"></div>`;
-  }).join('');
-  var wins=recent.filter(r=>r==='1').length;
-  return `<div class="streak-wrap">
-    <span class="streak-label">Last ${recent.length}</span>
-    <div class="streak-strip">${pills}</div>
-    <span class="streak-current">${wins}W ${recent.length-wins}L</span>
-  </div>`;
-}
-
-/* ── MAPS ── */
-function renderMaps(segs){
-  var maps=(segs||[]).filter(s=>s.type==='Map').map(s=>({
+/* ── Best/Worst map ── */
+function renderMapBadges(segs){
+  const maps=(segs||[]).filter(s=>s.type==='Map').map(s=>({
     name:s.label||'Map',
     matches:parseInt((s.stats||{}).Matches,10)||0,
+    wr:parseFloat((s.stats||{})['Win Rate %'])||0,
+    kd:(s.stats||{})['K/D Ratio']||(s.stats||{})['Average K/D Ratio']||'—'
+  })).filter(m=>m.matches>=5).sort((a,b)=>b.wr-a.wr);
+  if(maps.length<2) return '';
+  const best=maps[0], worst=maps[maps.length-1];
+  return `<div class="map-badges">
+    <div class="map-badge best">
+      <span class="map-badge-label">Best Map</span>
+      <span class="map-badge-name">${esc(best.name)}</span>
+      <span class="map-badge-stat">${Math.round(best.wr)}% WR · KD ${esc(best.kd)}</span>
+    </div>
+    <div class="map-badge worst">
+      <span class="map-badge-label">Worst Map</span>
+      <span class="map-badge-name">${esc(worst.name)}</span>
+      <span class="map-badge-stat">${Math.round(worst.wr)}% WR · KD ${esc(worst.kd)}</span>
+    </div>
+  </div>`;
+}
+
+/* ── Map bars ── */
+function renderMaps(segs){
+  const maps=(segs||[]).filter(s=>s.type==='Map').map(s=>({
+    name:s.label||'Map',matches:parseInt((s.stats||{}).Matches,10)||0,
     wr:parseFloat((s.stats||{})['Win Rate %'])||0,
     kd:(s.stats||{})['K/D Ratio']||(s.stats||{})['Average K/D Ratio']||'—'
   })).filter(m=>m.matches>0).sort((a,b)=>b.matches-a.matches).slice(0,8);
   if(!maps.length) return '<div class="state">No map data.</div>';
   return `<div class="tbl-wrap"><div class="map-bars">${maps.map(m=>{
-    var cls=m.wr>=50?'good':'bad';
-    return `<div class="map-bar-row">
-      <div class="map-bar-name">${esc(m.name)}</div>
-      <div class="map-bar-track"><div class="map-bar-fill ${cls}" style="width:${Math.min(m.wr,100)}%"></div></div>
-      <div class="map-bar-meta">${Math.round(m.wr)}% wr · KD ${esc(m.kd)} · ${m.matches}m</div>
-    </div>`;
+    const cls=m.wr>=50?'good':'bad';
+    return `<div class="map-bar-row"><div class="map-bar-name">${esc(m.name)}</div><div class="map-bar-track"><div class="map-bar-fill ${cls}" style="width:${Math.min(m.wr,100)}%"></div></div><div class="map-bar-meta">${Math.round(m.wr)}% wr · KD ${esc(m.kd)} · ${m.matches}m</div></div>`;
   }).join('')}</div></div>`;
 }
 
-/* ── faction ── */
-function faction(m,pid){ var t=m.teams||{}; for(var k in t) if((t[k].players||[]).some(p=>p.player_id===pid)) return k; return null; }
+/* ── Streak ── */
+function renderStreak(arr){
+  if(!arr||!arr.length) return '';
+  const pills=arr.map(r=>`<div class="streak-pill ${r==='1'?'w':r==='0'?'l':'d'}" title="${r==='1'?'Win':r==='0'?'Loss':'—'}"></div>`).join('');
+  const w=arr.filter(r=>r==='1').length;
+  return `<div class="streak-wrap"><span class="streak-label">Last ${arr.length}</span><div class="streak-strip">${pills}</div><span class="streak-stat">${w}W ${arr.length-w}L</span></div>`;
+}
 
-/* ── HISTORY ── */
-async function loadHistory(slotId,playerId,limit,eloPoints){
-  var tbody=document.getElementById('tbody-'+slotId);
-  if(!tbody) return;
+/* ── Faction ── */
+function faction(m,pid){ const t=m.teams||{}; for(const k in t) if((t[k].players||[]).some(p=>p.player_id===pid)) return k; return null; }
+
+/* ── History ── */
+async function loadHistory(sid,pid,lim,eloCtx){
+  const tbody=document.getElementById('tbody-'+sid); if(!tbody) return;
   tbody.innerHTML=`<tr><td colspan="6" class="muted" style="padding:14px"><span class="spin"></span></td></tr>`;
   try{
-    var h=await api('/api/player-id/'+playerId+'/history?limit='+limit);
-    var items=h.items||[];
+    const h=await api('/api/player-id/'+pid+'/history?limit='+lim);
+    const items=h.items||[];
     if(!items.length){ tbody.innerHTML=`<tr><td colspan="6" class="muted" style="padding:14px">No matches.</td></tr>`; return; }
 
-    // Build ELO timeline from elo_changes
-    if(eloPoints){
-      var pts=[];
-      var cur=eloPoints.startElo||0;
-      for(var i=items.length-1;i>=0;i--){
-        var f=faction(items[i],playerId);
-        var ec=items[i].elo_changes&&f?parseInt(items[i].elo_changes[f],10)||0:0;
-        pts.push(cur);
-        cur+=ec;
+    // Build ELO chart points
+    if(eloCtx){
+      let cur=eloCtx.startElo, pts=[];
+      for(let i=items.length-1;i>=0;i--){
+        const f=faction(items[i],pid);
+        const ec=items[i].elo_changes&&f?parseInt(items[i].elo_changes[f],10)||0:0;
+        pts.push(cur); cur+=ec;
       }
       pts.push(cur);
-      eloPoints.data=pts;
-      var chartEl=document.getElementById('elo-chart-svg-'+slotId);
-      var rangeEl=document.getElementById('elo-chart-range-'+slotId);
+      eloCtx.data=pts;
+      const chartEl=document.getElementById('elo-chart-svg-'+sid);
+      const rangeEl=document.getElementById('elo-chart-range-'+sid);
+      const peakEl=document.getElementById('elo-peak-'+sid);
       if(chartEl&&pts.length>1){
+        const peakElo=Math.max(...pts);
         chartEl.innerHTML=buildChart(pts);
-        if(rangeEl) rangeEl.textContent=`${Math.min(...pts)} – ${Math.max(...pts)} ELO`;
+        if(rangeEl) rangeEl.textContent=`${Math.min(...pts)} – ${Math.max(...pts)}`;
+        if(peakEl&&peakElo>eloCtx.startElo) peakEl.textContent=`Peak ${peakElo}`;
+        else if(peakEl) peakEl.style.display='none';
       }
     }
 
     tbody.innerHTML=items.map(m=>{
-      var f2=faction(m,playerId), w=m.results&&m.results.winner;
-      var win=f2&&w?f2===w:null;
-      var score=m.results&&m.results.score?(m.results.score[f2]+':'+m.results.score[f2==='faction1'?'faction2':'faction1']):'—';
-      var elo=m.elo_changes&&f2?m.elo_changes[f2]:null;
-      var map=(m.voting&&m.voting.map&&m.voting.map.pick&&m.voting.map.pick[0])||m.game_mode||'—';
-      var resHtml=win===null?`<span class="res d">?</span>`:(win?`<span class="res w">${esc(score)}</span>`:`<span class="res l">${esc(score)}</span>`);
-      var eloHtml='<span class="elo-neu">—</span>';
-      if(elo!==null){ var n=parseInt(elo,10); eloHtml=n>0?`<span class="elo-pos">+${n}</span>`:n<0?`<span class="elo-neg">${n}</span>`:`<span class="elo-neu">±0</span>`; }
-      var mid=m.match_id||'';
-      return `<tr data-mid="${esc(mid)}" data-pid="${esc(playerId)}">
-        <td><div class="map-cell"><div class="map-dot"></div><span class="map-name">${esc(map)}</span></div></td>
-        <td>${resHtml}</td>
-        <td>${eloHtml}</td>
+      const f2=faction(m,pid),w=m.results&&m.results.winner;
+      const win=f2&&w?f2===w:null;
+      const score=m.results&&m.results.score?(m.results.score[f2]+':'+m.results.score[f2==='faction1'?'faction2':'faction1']):'—';
+      const elo=m.elo_changes&&f2?m.elo_changes[f2]:null;
+      const map=(m.voting&&m.voting.map&&m.voting.map.pick&&m.voting.map.pick[0])||m.game_mode||'—';
+      const resH=win===null?`<span class="res d">?</span>`:(win?`<span class="res w">${esc(score)}</span>`:`<span class="res l">${esc(score)}</span>`);
+      let eloH='<span class="elo-neu">—</span>';
+      if(elo!==null){ const n=parseInt(elo,10); eloH=n>0?`<span class="elo-pos">+${n}</span>`:n<0?`<span class="elo-neg">${n}</span>`:`<span class="elo-neu">±0</span>`; }
+      const mid=m.match_id||'';
+      return `<tr data-mid="${esc(mid)}" data-pid="${esc(pid)}">
+        <td><div class="map-cell"><div class="map-dot"></div><span class="map-name-t">${esc(map)}</span></div></td>
+        <td>${resH}</td><td>${eloH}</td>
         <td class="muted">${esc(fdate(m.finished_at))}</td>
         <td class="muted">—</td>
         <td><span class="match-id">${esc(mid.slice(0,14))}…</span></td>
-      </tr>
-      <tr class="detail-row"><td colspan="6"><div class="detail-inner" id="di-${esc(mid)}"></div></td></tr>`;
+      </tr><tr class="detail-row"><td colspan="6"><div class="detail-inner" id="di-${esc(mid)}"></div></td></tr>`;
     }).join('');
     wireRows(tbody.closest('table'));
   }catch(e){
@@ -460,8 +510,8 @@ async function loadHistory(slotId,playerId,limit,eloPoints){
 function wireRows(tbl){
   tbl.querySelectorAll('tbody tr[data-mid]').forEach(tr=>{
     tr.addEventListener('click',()=>{
-      var mid=tr.dataset.mid, pid=tr.dataset.pid;
-      var box=document.getElementById('di-'+mid); if(!box) return;
+      const mid=tr.dataset.mid,pid=tr.dataset.pid;
+      const box=document.getElementById('di-'+mid); if(!box) return;
       if(box.classList.contains('show')){ box.classList.remove('show'); return; }
       openDetail(mid,pid,box);
     });
@@ -469,17 +519,16 @@ function wireRows(tbl){
 }
 
 async function openDetail(mid,pid,box){
-  box.classList.add('show');
-  box.innerHTML=`<span class="spin"></span>`;
+  box.classList.add('show'); box.innerHTML=`<span class="spin"></span>`;
   try{
-    var d=await api('/api/match/'+mid+'/stats');
-    var rnd=d.rounds&&d.rounds[0];
-    if(!rnd){ box.innerHTML='<span style="color:var(--sub);font-size:12px">No stats available.</span>'; return; }
-    var rs=rnd.round_stats||{};
-    var meta=`<div class="detail-meta">Map: <b>${esc(rs.Map||'—')}</b> &nbsp;·&nbsp; Score: <b>${esc(rs.Score||'—')}</b></div>`;
-    var teams=`<div class="detail-teams">${(rnd.teams||[]).map(t=>{
-      var tn=(t.team_stats&&t.team_stats.Team)||'Team';
-      var ps=(t.players||[]).map(p=>{ var s=p.player_stats||{}, me=p.player_id===pid;
+    const d=await api('/api/match/'+mid+'/stats');
+    const rnd=d.rounds&&d.rounds[0];
+    if(!rnd){ box.innerHTML='<span style="color:var(--sub);font-size:12px">No stats.</span>'; return; }
+    const rs=rnd.round_stats||{};
+    const meta=`<div class="detail-meta">Map: <b>${esc(rs.Map||'—')}</b> &nbsp;·&nbsp; Score: <b>${esc(rs.Score||'—')}</b></div>`;
+    const teams=`<div class="detail-teams">${(rnd.teams||[]).map(t=>{
+      const tn=(t.team_stats&&t.team_stats.Team)||'Team';
+      const ps=(t.players||[]).map(p=>{ const s=p.player_stats||{},me=p.player_id===pid;
         return `<div class="d-player${me?' me':''}"><span>${esc(p.nickname)}</span><span class="d-kda">${esc(s.Kills||0)}/${esc(s.Deaths||0)}/${esc(s.Assists||0)}</span></div>`;
       }).join('');
       return `<div class="detail-team"><div class="team-name">${esc(tn)}</div>${ps}</div>`;
@@ -488,83 +537,74 @@ async function openDetail(mid,pid,box){
   }catch(e){ box.innerHTML=`<span style="color:var(--red);font-size:12px">${esc(e.message)}</span>`; }
 }
 
-/* ── LIVE match ── */
-async function checkLive(playerId,slotId){
+/* ── Live ── */
+async function checkLive(pid,sid){
   try{
-    var h=await api('/api/player-id/'+playerId+'/history?limit=1');
-    var m=h.items&&h.items[0];
+    const h=await api('/api/player-id/'+pid+'/history?limit=1');
+    const m=h.items&&h.items[0];
     if(!m) return;
-    // Match is "live" if finished_at is missing or 0
     if(!m.finished_at||m.finished_at===0){
-      var map=(m.voting&&m.voting.map&&m.voting.map.pick&&m.voting.map.pick[0])||'—';
-      var el=document.getElementById('live-banner-'+slotId);
-      if(el) el.innerHTML=`<div class="live-dot"></div><span class="live-text">LIVE</span><span class="live-map">· ${esc(map)}</span><span class="live-score">Match ID: ${esc((m.match_id||'').slice(0,10))}…</span>`;
-      if(el) el.style.display='flex';
+      const map=(m.voting&&m.voting.map&&m.voting.map.pick&&m.voting.map.pick[0])||'—';
+      const el=document.getElementById('live-banner-'+sid);
+      if(el){ el.innerHTML=`<div class="live-dot"></div><span class="live-text">LIVE</span><span class="live-map">· ${esc(map)}</span><span class="live-score">${esc((m.match_id||'').slice(0,10))}…</span>`; el.style.display='flex'; }
     }
   }catch(_){}
 }
 
-/* ── AUTOCOMPLETE ── */
-var acTimers={};
-function setupAutocomplete(slotId){
-  var inp=document.getElementById('inp-'+slotId);
-  var ac=document.getElementById('ac-'+slotId);
+/* ── Autocomplete ── */
+const acTimers={};
+function setupAC(sid){
+  const inp=document.getElementById('inp-'+sid);
+  const ac=document.getElementById('ac-'+sid);
   if(!inp||!ac) return;
-  var acIndex=-1;
+  let idx=-1;
   inp.addEventListener('input',()=>{
-    clearTimeout(acTimers[slotId]);
-    var q=inp.value.trim();
+    clearTimeout(acTimers[sid]);
+    const q=inp.value.trim();
     if(q.length<2){ ac.classList.remove('show'); return; }
-    acTimers[slotId]=setTimeout(async()=>{
+    acTimers[sid]=setTimeout(async()=>{
       try{
-        var s=await api('/api/search?nickname='+encodeURIComponent(q));
-        var items=(s.items||[]).slice(0,7);
+        const s=await api('/api/search?nickname='+encodeURIComponent(q));
+        const items=(s.items||[]).slice(0,7);
         if(!items.length){ ac.classList.remove('show'); return; }
         ac.innerHTML=items.map(p=>`<div class="ac-item" data-nick="${esc(p.nickname)}">
-          ${p.avatar?`<img class="ac-avatar" src="${esc(p.avatar)}" alt="">`:`<div class="ac-avatar" style="display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--sub)">${esc((p.nickname||'?').slice(0,2).toUpperCase())}</div>`}
+          <div class="ac-avatar">${p.avatar?`<img src="${esc(p.avatar)}" alt="">`:esc((p.nickname||'?').slice(0,2).toUpperCase())}</div>
           <span class="ac-name">${esc(p.nickname)}</span>
           <span class="ac-meta">${p.games&&p.games.cs2?'ELO '+p.games.cs2.faceit_elo:''}</span>
         </div>`).join('');
-        ac.querySelectorAll('.ac-item').forEach(el=>{
-          el.addEventListener('mousedown',e=>{ e.preventDefault(); inp.value=el.dataset.nick; ac.classList.remove('show'); });
-        });
-        ac.classList.add('show');
-        acIndex=-1;
+        ac.querySelectorAll('.ac-item').forEach(el=>el.addEventListener('mousedown',e=>{ e.preventDefault(); inp.value=el.dataset.nick; ac.classList.remove('show'); go(); }));
+        ac.classList.add('show'); idx=-1;
       }catch(_){}
-    },280);
+    },260);
   });
   inp.addEventListener('keydown',e=>{
-    var items=ac.querySelectorAll('.ac-item');
-    if(e.key==='ArrowDown'){ e.preventDefault(); acIndex=Math.min(acIndex+1,items.length-1); items.forEach((el,i)=>el.classList.toggle('focused',i===acIndex)); }
-    else if(e.key==='ArrowUp'){ e.preventDefault(); acIndex=Math.max(acIndex-1,0); items.forEach((el,i)=>el.classList.toggle('focused',i===acIndex)); }
-    else if(e.key==='Enter'&&acIndex>=0){ inp.value=items[acIndex].dataset.nick; ac.classList.remove('show'); go(); }
+    const items=ac.querySelectorAll('.ac-item');
+    if(e.key==='ArrowDown'){ e.preventDefault(); idx=Math.min(idx+1,items.length-1); items.forEach((el,i)=>el.classList.toggle('focused',i===idx)); }
+    else if(e.key==='ArrowUp'){ e.preventDefault(); idx=Math.max(idx-1,0); items.forEach((el,i)=>el.classList.toggle('focused',i===idx)); }
+    else if(e.key==='Enter'&&idx>=0){ inp.value=items[idx].dataset.nick; ac.classList.remove('show'); go(); }
+    else if(e.key==='Enter'&&idx<0){ go(); }
     else if(e.key==='Escape'){ ac.classList.remove('show'); }
-    else if(e.key==='Enter'&&acIndex<0){ go(); }
   });
   document.addEventListener('click',e=>{ if(!ac.contains(e.target)&&e.target!==inp) ac.classList.remove('show'); });
 }
 
-/* ── SLOTS ── */
-var slots=[{id:0}], slotState={};
-var searchRow=document.getElementById('search-row');
-var panelsEl=document.getElementById('panels');
-var compareBtn=document.getElementById('compare-btn');
+/* ── Slots ── */
+let slots=[{id:0}], slotState={};
+const searchRow=document.getElementById('search-row');
+const panelsEl=document.getElementById('panels');
+const compareBtn=document.getElementById('compare-btn');
 
 function renderInputs(){
   searchRow.innerHTML=slots.map(s=>
-    `<div class="search-wrap">
-      <input class="search-field" type="text" placeholder="Nickname…" id="inp-${s.id}" autocomplete="off">
-      <div class="autocomplete" id="ac-${s.id}"></div>
-    </div>`+
+    `<div class="search-wrap"><input class="search-field" type="text" placeholder="Nickname…" id="inp-${s.id}" autocomplete="off"><div class="autocomplete" id="ac-${s.id}"></div></div>`+
     (slots.length>1?`<button class="rm-btn" data-rm="${s.id}">✕</button>`:'')+
     (s===slots[slots.length-1]?`<button class="search-btn" id="go-btn">Search</button>`:'')
   ).join('');
   searchRow.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{
-    slots=slots.filter(s=>s.id!==+b.dataset.rm); delete slotState[+b.dataset.rm];
-    renderInputs(); renderPanels(); compareBtn.textContent='Compare two players';
+    slots=slots.filter(s=>s.id!==+b.dataset.rm); delete slotState[+b.dataset.rm]; renderInputs(); renderPanels(); compareBtn.textContent='Compare two players';
   }));
   document.getElementById('go-btn').addEventListener('click',go);
-  slots.forEach(s=>setupAutocomplete(s.id));
+  slots.forEach(s=>setupAC(s.id));
 }
 
 compareBtn.addEventListener('click',()=>{
@@ -573,34 +613,48 @@ compareBtn.addEventListener('click',()=>{
   renderInputs(); renderPanels();
 });
 
-function renderPanels(){
-  panelsEl.className='panels'+(slots.length>1?' dual':'');
-  panelsEl.innerHTML=slots.map(s=>`<div class="panel" id="panel-${s.id}"></div>`).join('');
+function renderPanels(){ panelsEl.className='panels'+(slots.length>1?' dual':''); panelsEl.innerHTML=slots.map(s=>`<div class="panel" id="panel-${s.id}"></div>`).join(''); }
+function setPanel(id,html){ const e=document.getElementById('panel-'+id); if(e) e.innerHTML=html; }
+function go(){ slots.forEach(s=>{ const inp=document.getElementById('inp-'+s.id); const n=inp&&inp.value.trim(); if(n) load(s.id,n); }); }
+
+/* ── Copy stats ── */
+function copyStats(nick,elo,lvl,lt){
+  const wr=pick(lt,['Win Rate %'])||'—';
+  const kd=pick(lt,['Average K/D Ratio','K/D Ratio'])||'—';
+  const hs=pick(lt,['Average Headshots %','Headshots %'])||'—';
+  const m=pick(lt,['Matches'])||'—';
+  const text=`${nick} | ELO ${elo} | Level ${lvl} | KD ${parseFloat(kd).toFixed(2)} | WR ${parseFloat(wr).toFixed(1)}% | HS ${parseFloat(hs).toFixed(1)}% | Matches ${m}`;
+  navigator.clipboard.writeText(text).then(()=>toast('📋 Copied to clipboard!')).catch(()=>toast('Could not copy'));
 }
-function setPanel(id,html){ var e=document.getElementById('panel-'+id); if(e) e.innerHTML=html; }
 
-function go(){ slots.forEach(s=>{ var inp=document.getElementById('inp-'+s.id); var n=inp&&inp.value.trim(); if(n) load(s.id,n); }); }
+/* ── Share link ── */
+function shareLink(nick){
+  const url=`${location.origin}${location.pathname}?player=${encodeURIComponent(nick)}`;
+  navigator.clipboard.writeText(url).then(()=>toast('🔗 Link copied!')).catch(()=>{ prompt('Copy this link:',url); });
+  pushUrl(nick);
+}
 
-/* ── MAIN LOAD ── */
+/* ── Main load ── */
 async function load(id,nick){
   slotState[id]=slotState[id]||{limit:20};
+  pushUrl(nick);
   setPanel(id,`<div class="state"><span class="spin"></span> Searching for <b>${esc(nick)}</b>…</div>`);
-
-  var player;
+  let player;
   try{ player=await api('/api/player/'+encodeURIComponent(nick)); }
   catch(e){
-    var sugg='';
-    try{ var s=await api('/api/search?nickname='+encodeURIComponent(nick)); if(s.items&&s.items.length) sugg='<div style="margin-top:10px">'+s.items.slice(0,5).map(p=>`<span class="chip" data-nick="${esc(p.nickname)}">${esc(p.nickname)}</span>`).join('')+'</div>'; }catch(_){}
+    let sugg='';
+    try{ const s=await api('/api/search?nickname='+encodeURIComponent(nick)); if(s.items&&s.items.length) sugg='<div style="margin-top:10px">'+s.items.slice(0,5).map(p=>`<span class="chip" data-nick="${esc(p.nickname)}">${esc(p.nickname)}</span>`).join('')+'</div>'; }catch(_){}
     setPanel(id,`<div class="state err">Player «${esc(nick)}» not found: ${esc(e.message)}${sugg}</div>`);
     document.getElementById('panel-'+id)&&document.getElementById('panel-'+id).querySelectorAll('[data-nick]').forEach(c=>c.addEventListener('click',()=>{ document.getElementById('inp-'+id).value=c.dataset.nick; load(id,c.dataset.nick); }));
     return;
   }
 
-  var gi=(player.games&&player.games.cs2)||{};
-  var lvl=gi.skill_level||'—', elo=gi.faceit_elo||'—';
-  var lim=slotState[id].limit;
+  const gi=(player.games&&player.games.cs2)||{};
+  const lvl=gi.skill_level||'—', elo=gi.faceit_elo||'—';
+  const lim=slotState[id].limit;
+  const eloCtx={startElo:parseInt(elo,10)||0};
 
-  var html=`
+  const html=`
     <div class="player-card">
       ${player.avatar?`<img class="avatar" src="${esc(player.avatar)}" alt="">`:`<div class="avatar-fallback">${esc((player.nickname||'??').slice(0,2).toUpperCase())}</div>`}
       <div>
@@ -609,14 +663,23 @@ async function load(id,nick){
           <span class="tag accent">ELO ${esc(elo)}</span>
           <span class="tag">Level ${esc(lvl)}</span>
           ${player.country?`<span class="tag">${esc(player.country.toUpperCase())}</span>`:''}
-          <span class="tag">CS2</span>
         </div>
       </div>
-      <div class="player-actions">${player.faceit_url?`<a class="player-link" href="${esc(player.faceit_url)}" target="_blank">FACEIT ↗</a>`:''}</div>
+      <div class="player-actions">
+        <button class="action-btn" id="copy-btn-${id}" title="Copy stats for Discord">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy stats
+        </button>
+        <button class="action-btn" id="share-btn-${id}" title="Share link">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          Share
+        </button>
+        ${player.faceit_url?`<a class="player-link" href="${esc(player.faceit_url)}" target="_blank">FACEIT ↗</a>`:''}
+      </div>
     </div>
 
-    <div class="live-banner" id="live-banner-${id}" style="display:none"></div>
-
+    <div class="live-banner" id="live-banner-${id}"></div>
+    <div id="form-banner-${id}"></div>
     <div id="streak-${id}"></div>
 
     ${renderEloProgress(elo)}
@@ -624,12 +687,16 @@ async function load(id,nick){
     <div class="elo-chart-wrap">
       <div class="elo-chart-head">
         <span class="elo-chart-title">ELO History</span>
-        <span class="elo-chart-range" id="elo-chart-range-${id}">loading…</span>
+        <div class="elo-chart-meta">
+          <span class="elo-peak-tag" id="elo-peak-${id}"></span>
+          <span class="elo-chart-range" id="elo-chart-range-${id}">loading…</span>
+        </div>
       </div>
-      <div id="elo-chart-svg-${id}"><div style="color:var(--sub);font-size:12px"><span class="spin"></span></div></div>
+      <div id="elo-chart-svg-${id}"><span class="spin"></span></div>
     </div>
 
     <div id="stats-${id}"><div class="state"><span class="spin"></span></div></div>
+    <div id="map-badges-${id}"></div>
 
     <div class="section">
       <div class="section-head">
@@ -655,7 +722,12 @@ async function load(id,nick){
   `;
   setPanel(id,html);
 
-  // Hist filters
+  // wire buttons — need player + lt for copy
+  let cachedLt={};
+  document.getElementById('copy-btn-'+id).addEventListener('click',()=>copyStats(player.nickname||nick,elo,lvl,cachedLt));
+  document.getElementById('share-btn-'+id).addEventListener('click',()=>shareLink(player.nickname||nick));
+
+  // hist filters
   document.getElementById('hf-'+id).querySelectorAll('[data-n]').forEach(b=>{
     b.addEventListener('click',()=>{
       document.getElementById('hf-'+id).querySelectorAll('[data-n]').forEach(x=>x.classList.remove('active'));
@@ -664,40 +736,53 @@ async function load(id,nick){
     });
   });
 
-  // Parallel loads
-  var eloCtx={startElo:parseInt(elo,10)||0};
   checkLive(player.player_id,id);
   loadHistory(id,player.player_id,lim,eloCtx);
 
   try{
-    var st=await api('/api/player-id/'+player.player_id+'/stats');
-    var lt=st.lifetime||{};
+    const st=await api('/api/player-id/'+player.player_id+'/stats');
+    const lt=st.lifetime||{};
+    cachedLt=lt;
+
     document.getElementById('stats-'+id).innerHTML=renderStats(lt);
     document.getElementById('maps-'+id).innerHTML=renderMaps(st.segments);
+    document.getElementById('map-badges-'+id).innerHTML=renderMapBadges(st.segments);
 
-    // Streak strip
-    var recent=lt['Recent Results'];
-    if(recent){
-      var arr=Array.isArray(recent)?recent:String(recent).split('');
+    // streak + form
+    const recent=lt['Recent Results'];
+    if(recent){ const arr=Array.isArray(recent)?recent:String(recent).split('');
       document.getElementById('streak-'+id).innerHTML=renderStreak(arr);
+      const form=analyzeForm(arr);
+      if(form){
+        const fb=document.getElementById('form-banner-'+id);
+        if(fb) fb.innerHTML=`<div class="form-banner ${form.cls}"><span class="form-icon">${form.icon}</span><span class="form-text">${form.text}</span><span class="form-sub">· ${form.sub}</span></div>`;
+      }
     }
 
-    // Raw stats
-    var rw=document.getElementById('raw-wrap-'+id);
+    // raw stats
+    const rw=document.getElementById('raw-wrap-'+id);
     if(rw&&Object.keys(lt).length){
-      var rows=Object.keys(lt).filter(k=>k!=='Recent Results').map(k=>`<div class="raw-row"><span class="raw-key">${esc(k)}</span><span>${esc(lt[k])}</span></div>`).join('');
+      const rows=Object.keys(lt).filter(k=>k!=='Recent Results').map(k=>`<div class="raw-row"><span class="raw-key">${esc(k)}</span><span>${esc(lt[k])}</span></div>`).join('');
       rw.innerHTML=`<button class="raw-toggle" id="rt-${id}">Show all API metrics ↓</button><div class="raw-box" id="rb-${id}">${rows}</div>`;
       document.getElementById('rt-'+id).addEventListener('click',()=>{
         document.getElementById('rb-'+id).classList.toggle('show');
         document.getElementById('rt-'+id).textContent=document.getElementById('rb-'+id).classList.contains('show')?'Hide metrics ↑':'Show all API metrics ↓';
       });
     }
-  }catch(e){
-    document.getElementById('stats-'+id).innerHTML=`<div class="state err">${esc(e.message)}</div>`;
-  }
+  }catch(e){ document.getElementById('stats-'+id).innerHTML=`<div class="state err">${esc(e.message)}</div>`; }
+}
+
+function renderEloProgress(elo){
+  const p=eloProgress(elo);
+  return `<div class="elo-progress-wrap">
+    <div class="elo-progress-head"><span class="elo-progress-title">ELO Progress</span><span class="elo-progress-pct">Level ${p.level} · ${p.pct}% · ${p.wins>0?p.wins+' wins to next lvl':'Max level'}</span></div>
+    <div class="elo-level-row"><span class="elo-level-num">${p.level}</span><div class="elo-track"><div class="elo-fill" style="width:${p.pct}%"></div></div><span class="elo-level-num">${p.level<10?p.level+1:10}</span></div>
+    <div class="elo-progress-labels"><span>${p.min}</span><span>${parseInt(elo,10)} ELO</span><span>${p.max}</span></div>
+  </div>`;
 }
 
 renderInputs();
+applyUrlPlayer();
 })();
 </script>
 </body>
